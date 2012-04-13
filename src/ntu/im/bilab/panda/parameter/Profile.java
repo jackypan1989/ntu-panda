@@ -289,17 +289,31 @@ public class Profile {
 	}
 	
 	// jacky
-	public void findForeignInventors(String[] inventor_count){
-		String[] us_states = {"AK","AL","AR","AZ","CA","CO","CT","CZ","DC","DE","FL" 
-							 ,"GA","AK","AL","AR" ,"AZ",
-				"AK","AL","AR" ,"AZ",
-				"AK","AL","AR" ,"AZ",
-				"AK","AL","AR" ,"AZ",
-				"AK","AL","AR" ,"AZ",
-				"AK","AL","AR" ,"AZ"}; 
-		for (int i=0 ; i<inventor_count.length ; i++){
-			//inventor_count[i].contain()
+	public void findForeignInventors(String[] inventors){
+		
+		// uspto patent state code in usa
+		String[] us_states = {"AK","AL","AR","AZ","CA","CO","CT","CZ","DC","DE",
+				              "FL","GA","HI","IA","ID","IL","IN","KS","KY","LA",
+				              "MA","MD","ME","MI","MN","MO","MS","MT","NE","NC",
+				              "ND","NH","NJ","NM","NY","NV","OH","OK","OR","PA",
+				              "PR","RI","SC","SD","TN","TX","UT","VA","VI","VT",
+				              "WA","WI","WY","NB"}; 
+		
+		// flag that amount of inventors in the same state or country
+		int same_state = 0 ;
+		
+		for (int i=0 ; i<inventors.length ; i++){
+			System.out.println(inventors[i]);
+			if(inventors[i].contains("(")){
+				
+				
+				
+			}else{
+				same_state++;
+			}
 		}
+		
+		
 		
 		
 		
