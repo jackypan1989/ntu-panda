@@ -1,4 +1,4 @@
-package ntu.im.bilab.panda.core;
+package ntu.im.bilab.panda.jacky;
 
 public class Test {
 
