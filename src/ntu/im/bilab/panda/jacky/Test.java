@@ -6,11 +6,11 @@ public class Test {
 		// TODO Auto-generated method stub
 		//String s=" Inventors:  Price; Edgar E. (Webster, NY) Appl. No.:   05/515,244 Filed:  October 16, 1974";  
 		//String s1=" Inventors:  Carlson; Arthur W. (Muskegon, MI)  Assignee:  E. H. Sheldon and Company (Muskegon, MI)   Appl. No.:   05/535,172 Filed:  December 23, 1974  ";
-		String s2=" Inventors:  Schiefer; Harry M. (Midland, MI), Laux; Raymund W. (Munich-Karlsfeld, DT), Grosse; Dietmar W. (Munich, DT)  Assignee:  Dow Corning Corporation (Midland, MI)   Appl. No.:   05/562,292 Filed:  March 26, 1975  ";
+		String str=" Inventors:  Schiefer; Harry M. (Midland, MI), Laux; Raymund W. (Munich-Karlsfeld, DT), Grosse; Dietmar W. (Munich, DT)  Assignee:  Dow Corning Corporation (Midland, MI)   Appl. No.:   05/562,292 Filed:  March 26, 1975  ";
 				
 		Test t = new Test();
-		t.getInventors(s2);	
-		t.getForeignInventors(s2);	
+		t.getInventors(str);	
+		t.getForeignInventors(str);	
 	}
     
 	/* 	
