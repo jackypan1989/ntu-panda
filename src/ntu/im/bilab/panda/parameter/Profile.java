@@ -84,20 +84,16 @@ public class Profile {
 	}
 		
 	/*Find table*/
-	public String Find_table(String pid)
-	{
+	public String Find_table(String pid) {
 		int year;
 		String table_name = "";
-		for(year = 1976 ; year <= 2009 ; year++)
-		{
+		for(year = 1976 ; year <= 2009 ; year++) {
 			
-			try
-			{			
+			try {			
 				selectSQL = "select Patent_id,Inventors, `Issued date`,`References Cited` from uspto_"+ year + " where Patent_id =" + "'" + pid + "'" ;			
 				stat = con.createStatement();
 			    rs = stat.executeQuery(selectSQL);			    
-			    if(rs.absolute(1)== true)
-			    {
+			    if(rs.absolute(1)== true) {
 			    	//System.out.print(year);
 			    	break;
 			    }			
@@ -112,8 +108,7 @@ public class Profile {
 	}
 	
 	/*Process Approve Time*/
-	public static long Approve_Time(String dateStr1,String dateStr2)
-	{
+	public static long Approve_Time(String dateStr1,String dateStr2) {
 		SimpleDateFormat sdf =  new SimpleDateFormat("yyyyMMdd");
         ParsePosition pos1 = new ParsePosition(0);
         ParsePosition pos2 = new ParsePosition(0);
@@ -138,8 +133,7 @@ public class Profile {
 	    public String getintMonth() { return intMonth; }
 	}
 				
-	public static String Process_Date(String d)
-	{		
+	public static String Process_Date(String d) {		
 		
 		String delims = "[ ,]+";
 		String[] tokens = d.split(delims);
@@ -163,10 +157,8 @@ public class Profile {
 		}
 		return result; 		
 	}
-		
-	
-	public void SelectTable()
-	{
+
+	public void SelectTable() {
 		try
 	    {		
 			stat = con.createStatement();
@@ -244,25 +236,24 @@ public class Profile {
 	    catch(SQLException e) { System.out.println("DropDB Exception :" + e.toString()); }
 	    finally { Close_DB(); }
 	}
-	public int GetInventors()
-	{
+	
+	public int GetInventors() {
 		return inventors;
 	}
-	public int GetAssignee()
-	{
+	
+	public int GetAssignee() {
 		return assignees;
 	}
-	public int GetCitation()
-	{
+	
+	public int GetCitation() {
 		return citations;
 	}
-	public long GetApproveTime()
-	{
+	
+	public long GetApproveTime() {
 		return approve_time;
 	}
 	
-	public void PrintAll()
-	{
+	public void PrintAll() {
     	System.out.println("Number of Inventors: " + inventors + "\n" 
 		+ "Number of Assignees: " + assignees + "\n" 
 		+ "Number of Citations: " + citations + "\n" 
@@ -271,8 +262,7 @@ public class Profile {
 		
 	}
 	
-	public static void main(String[] args) throws IOException 
-	{				
+	public static void main(String[] args) throws IOException {				
 		System.out.println("Enter a Patent ID: ");		
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));	
 		
@@ -289,8 +279,7 @@ public class Profile {
 	}
 	
 	// jacky
-	public void findForeignInventors(String[] inventors){
-		
+	public void findForeignInventors(String[] inventors) {
 		// uspto patent state code in usa
 		String[] us_states = {"AK","AL","AR","AZ","CA","CO","CT","CZ","DC","DE",
 				              "FL","GA","HI","IA","ID","IL","IN","KS","KY","LA",
@@ -312,11 +301,6 @@ public class Profile {
 				same_state++;
 			}
 		}
-		
-		
-		
-		
-		
 	}
 		
 }
