@@ -20,7 +20,7 @@ public class ParameterFinder {
 		// TODO Auto-generated method stub
 		ParameterFinder t = new ParameterFinder();
 		
-		Patent patent = new Patent("4995689");
+		Patent patent = new Patent("3961423");
 		String patent_id = patent.getId();
 		ResultSet new_data = patent.getNewData();
 		ResultSet old_data = patent.getOldData();
@@ -29,13 +29,18 @@ public class ParameterFinder {
 		try {
 			patent.setParameterForeignInventors(t.getForeignInventors(old_data.getString("Inventors")));
 			patent.setParameterForeignClasses(t.getForeignClasses(old_data.getString("References Cited")));
+			patent.setParameterPatentFamilySize(t.getPatentFamilySize(patent_id));
+			patent.setParameterPatentedBackwardCitations(t.getPatentedBackwardCitations(patent_id));
+			patent.setParameterMajorMarket(t.getMajorMarket(patent_id));
+			patent.setParameterForeignPriorityApps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		patent.setParameterPatentFamilySize(t.getPatentFamilySize(patent_id));
-		patent.setParameterPatentedBackwardCitations(t.getPatentedBackwardCitations(patent_id));
-		patent.setParameterMajorMarket(t.getMajorMarket(patent_id));
+		patent.setParameterYearsToReceiveTheFirstCitation(t.getYearsToReceiveTheFirstCitation(patent));
+		
+		System.out.println(patent.toString());
+		
 	}
 	
 	/* 	
@@ -63,7 +68,7 @@ public class ParameterFinder {
 		
 		// get the amount of inventors
 		int total_inventors = inventors.length-1;
-		System.out.println("inventors : "+total_inventors);
+		//System.out.println("inventors : "+total_inventors);
 		return total_inventors;
 	}		
 	
@@ -118,7 +123,7 @@ public class ParameterFinder {
 		
 		// get the amount of foreign inventors
 		foreign_inventors  = total_inventors - local_inventors;
-		System.out.println("foreign_inventors : "+foreign_inventors);
+		//System.out.println("foreign_inventors : "+foreign_inventors);
 		return foreign_inventors;
 	}
 	
@@ -147,7 +152,7 @@ public class ParameterFinder {
 			foreign_classes = foreign_patents.length-1;
 			
 		}
-		System.out.println("foreign_classes : "+foreign_classes);
+		//System.out.println("foreign_classes : "+foreign_classes);
 		return foreign_classes;
 	}
 	
@@ -168,7 +173,7 @@ public class ParameterFinder {
 			// find the amount of patent family size
 			Element data = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
 			patent_family_size = Integer.parseInt(data.text());
-			System.out.println("patent family size : "+patent_family_size);
+			//System.out.println("patent family size : "+patent_family_size);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -197,7 +202,7 @@ public class ParameterFinder {
 			if(data.contains("JP")) major_market++;
 			
 			//major_market = data.text();
-			System.out.println("major_market : "+major_market);
+			//System.out.println("major_market : "+major_market);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -223,7 +228,7 @@ public class ParameterFinder {
 			// find the amount of backward citations
 			Element element = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
 			patented_backward_citations = Integer.parseInt(element.text());
-			System.out.println("patented backward citations : "+patented_backward_citations);
+			//System.out.println("patented backward citations : "+patented_backward_citations);
 	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -233,8 +238,34 @@ public class ParameterFinder {
 		return patented_backward_citations;
 	}
 	
+	/* 	
+	 *  Variable Number : 52
+	 *	Method : return the number of the foreign priority applications from USPTO   
+	 * 	Return Type : Integer
+	 *  Author : Guan-Yu Pan
+	 * 	Last Edit Date : 20120606
+	 */
+	public int getForeignPriorityApps(String data){
+	    int foreign_priority_apps = 0;
+	    
+	    // clarify data if it includes foreign application priority data
+	    if(data.contains("Foreign Application Priority Data")){
+			// calculate
+			String[] foreign_patents = data.split("\\[");
+			foreign_priority_apps = foreign_patents.length-1;
+		}
+	    
+		return foreign_priority_apps;
+	}
 	
-	
+	public int getYearsToReceiveTheFirstCitation(Patent patent){
+	    int years_to_receive_the_first_citation = 0;
+		
+	    DataBaseFetcher dbf = new DataBaseFetcher();
+	    years_to_receive_the_first_citation = dbf.getYear(patent,"years_to_receive_the_first_citation")-Integer.parseInt(patent.getYear());
+		
+		return years_to_receive_the_first_citation;
+	}
 	
 	
 	public String getEC(String patent_id){
@@ -252,7 +283,6 @@ public class ParameterFinder {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return ec;
 	}
 }

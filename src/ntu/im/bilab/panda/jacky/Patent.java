@@ -10,7 +10,6 @@ public class Patent{
 
 	// data from db patent_value
 	private ResultSet old_data;
-
 	
 	// parameter
 	private int parameter_foreign_inventors;
@@ -18,6 +17,8 @@ public class Patent{
 	private int parameter_patent_family_size;
 	private int parameter_patented_backward_citations;
 	private int parameter_major_market;
+	private int parameter_foreign_priority_apps;
+	private int parameter_years_to_receive_the_first_citation;
 	
 	public Patent(String patent_id) {
 		// TODO Auto-generated constructor stub
@@ -27,6 +28,20 @@ public class Patent{
 		
 	}
     
+	public String toString(){
+		String attributes = "";
+		attributes = attributes + "foreign_inventors->" + parameter_foreign_inventors + "\n";
+		attributes = attributes + "foreign_classes->" + parameter_foreign_classes + "\n";
+		attributes = attributes + "patent_family_size->" + parameter_patent_family_size + "\n";
+		attributes = attributes + "patented_backward_citations->" + parameter_patented_backward_citations + "\n";
+		attributes = attributes + "major_market->" + parameter_major_market + "\n";
+		attributes = attributes + "foreign_priority_apps->" + parameter_foreign_priority_apps + "\n";
+		attributes = attributes + "years_to_receive_the_first_citation->" + parameter_years_to_receive_the_first_citation + "\n";
+		
+		return attributes;
+	}
+	
+	
 	public ResultSet getNewData() {
 		return new_data;
 	}
@@ -98,6 +113,23 @@ public class Patent{
 
 	public void setParameterMajorMarket(int parameter_major_market) {
 		this.parameter_major_market = parameter_major_market;
+	}
+
+	public int getParameterForeignPriorityApps() {
+		return parameter_foreign_priority_apps;
+	}
+
+	public void setParameterForeignPriorityApps(int parameter_foreign_priority_apps) {
+		this.parameter_foreign_priority_apps = parameter_foreign_priority_apps;
+	}
+
+	public int getParameterYearsToReceiveTheFirstCitation() {
+		return parameter_years_to_receive_the_first_citation;
+	}
+
+	public void setParameterYearsToReceiveTheFirstCitation(
+			int parameter_years_to_receive_the_first_citation) {
+		this.parameter_years_to_receive_the_first_citation = parameter_years_to_receive_the_first_citation;
 	}
 
 	

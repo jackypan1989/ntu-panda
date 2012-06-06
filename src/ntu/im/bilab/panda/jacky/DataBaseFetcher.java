@@ -86,8 +86,34 @@ public class DataBaseFetcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+    
+    public int getYear(Patent patent , String parameter){
+    	int start_year = 1976;
+		int end_year = 2009;
+		int year = 0;
+		
+		ResultSet result = null;
+		
+		if(parameter=="years_to_receive_the_first_citation"){
+			year = Integer.parseInt(patent.getYear()) ; 
+			String patent_id = patent.getId();
+			
+			System.out.println(year);
+			System.out.println(patent_id);
+			
+			for(int i = year ; i <= end_year ; i++){
+				try {
+					result = stmt.executeQuery("select * from `patent-referencedby_"+ i + "` where Patent_id =" + "'" + patent_id + "'");
+					if(result.absolute(1)) return i;
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+    	}
+    	return year;
+    }
     
 	public void updateParameter(){
 		int start_year = 1976;
