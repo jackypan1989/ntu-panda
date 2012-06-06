@@ -1,37 +1,43 @@
 package ntu.im.bilab.panda.jacky;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.regex.Pattern;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import ntu.im.bilab.panda.core.Config;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Test {
-
+public class ParameterFinder {
+	private static String ec;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//String s=" Inventors:  Price; Edgar E. (Webster, NY) Appl. No.:   05/515,244 Filed:  October 16, 1974";  
-		//String s1=" Inventors:  Carlson; Arthur W. (Muskegon, MI)  Assignee:  E. H. Sheldon and Company (Muskegon, MI)   Appl. No.:   05/535,172 Filed:  December 23, 1974  ";
-		String str=" Inventors:  Schiefer; Harry M. (Midland, MI), Laux; Raymund W. (Munich-Karlsfeld, DT), Grosse; Dietmar W. (Munich, DT)  Assignee:  Dow Corning Corporation (Midland, MI)   Appl. No.:   05/562,292 Filed:  March 26, 1975  ";
+		ParameterFinder t = new ParameterFinder();
 		
-	
+		Patent patent = new Patent("4995689");
+		String patent_id = patent.getId();
+		ResultSet new_data = patent.getNewData();
+		ResultSet old_data = patent.getOldData();
 		
-		Test t = new Test();
-		t.getPatentFamilySize("TEST");
-		/*
-		t.getInventors(str);	
-		t.getForeignInventors(str);	
-		t.getForeignClasses(str);	
-		*/
+		ec = t.getEC(patent_id);
+		try {
+			patent.setParameterForeignInventors(t.getForeignInventors(old_data.getString("Inventors")));
+			patent.setParameterForeignClasses(t.getForeignClasses(old_data.getString("References Cited")));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		patent.setParameterPatentFamilySize(t.getPatentFamilySize(patent_id));
+		patent.setParameterPatentedBackwardCitations(t.getPatentedBackwardCitations(patent_id));
+		patent.setParameterMajorMarket(t.getMajorMarket(patent_id));
 	}
-    
+	
 	/* 	
 	 *  Variable Number : 1
 	 *	Method : return the amount of inventors
@@ -124,10 +130,9 @@ public class Test {
 	 * 	Last Edit Date : 20120425
 	 *  Example : "U.S. Patent Documents     D191499 October 1961 Donay D233586 November 1974 Kopp D261601 November 1981 Kettlestrings D287093 December 1986 Ryan 1388282 August 1921 Meredith   Foreign Patent Documents     4615 ., 1891 GB     Primary Examiner:  Burke; Wallace R. <BR> Assistant Examiner:  Tabor; Lavone D. <BR> Attorney, Agent or Firm: Zarley, McKee, Thomte, Voorhees & Sease <BR>";
 	 */ 
-	public int getForeignClasses(String patent_id){
+	public int getForeignClasses(String data){
 		
-		String data = "U.S. Patent Documents     D191499 October 1961 Donay D233586 November 1974 Kopp D261601 November 1981 Kettlestrings D287093 December 1986 Ryan 1388282 August 1921 Meredith   Foreign Patent Documents     4615 ., 1891 GB     Primary Examiner:  Burke; Wallace R. <BR> Assistant Examiner:  Tabor; Lavone D. <BR> Attorney, Agent or Firm: Zarley, McKee, Thomte, Voorhees & Sease <BR>";
-	    int foreign_classes = 0;
+		int foreign_classes = 0;
 		
 	    // clarify data, some with other references 
 	    if(data.contains("Foreign Patent Documents")){
@@ -144,30 +149,10 @@ public class Test {
 		}
 		System.out.println("foreign_classes : "+foreign_classes);
 		return foreign_classes;
-	    
-	    /* direct fetch from uspto web 
-	    StringBuilder document= new StringBuilder();
-		try {
-			URL url = new URL("http://patft1.uspto.gov/netacgi/nph-Parser?patentnumber="+patent_id);
-			URLConnection conn = url.openConnection();
-			conn.setConnectTimeout(30000);
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		    String line = null;
-		    while ((line = reader.readLine()) != null)
-		    	document.append(line + "\n");
-		    reader.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/  
 	}
 	
 	/* 	
-	 *  Variable Number : 6
+	 *  Variable Number : 8
 	 *	Method : return the size of patent family from EPO  
 	 * 	Return Type : Integer 
 	 *  Author : Guan-Yu Pan
@@ -176,13 +161,14 @@ public class Test {
 	 */ 
 	public int getPatentFamilySize(String patent_id){
 	    int patent_family_size = 0;
-		
+	    
 	    // fetch from EPO
 		try {
-			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&NR=RE37489E1&FT=D").get();
-			Element s = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
-			patent_family_size = Integer.parseInt(s.text());
-			System.out.println(s.text());
+			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR="+patent_id+ec).get();
+			// find the amount of patent family size
+			Element data = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
+			patent_family_size = Integer.parseInt(data.text());
+			System.out.println("patent family size : "+patent_family_size);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -191,37 +177,82 @@ public class Test {
 		return patent_family_size;
 	}
 	
-    /*
-	public int getPatentFamilySize(String patent_id){
-		int patent_family_size = 0;
-		
-	    StringBuilder document= new StringBuilder();
+	/* 	
+	 *  Variable Number : 9
+	 *	Method : return of the parameter of major market(US,EU,JP)   
+	 * 	Return Type : Integer 
+	 *  Author : Guan-Yu Pan
+	 * 	Last Edit Date : 20120430
+	 *  Example : "http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&NR=RE37489E1&FT=D";
+	 */ 
+	public int getMajorMarket(String patent_id){
+	    int major_market = 1;
+	    // fetch from EPO
 		try {
-			URL url = new URL("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR="+patent_id);
-			URLConnection conn = url.openConnection();
-			conn.setConnectTimeout(30000);
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		    String line = null;
-		    while ((line = reader.readLine()) != null)
-		    	document.append(line + "\n");
-		    reader.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR="+patent_id+ec).get();
+			// find the amount of patent family size
+			Elements elements = doc.getElementsByClass("publicationInfoColumn");
+			String data = elements.text();
+			if(data.contains("EP")) major_market++;
+			if(data.contains("JP")) major_market++;
+			
+			//major_market = data.text();
+			System.out.println("major_market : "+major_market);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String data = document.toString();
-		
-		data = data.substring(data.indexOf("epoBarItem"),data.indexOf("application"));
-		Pattern p = Pattern.compile("+[0-9]");
-		String patent_family = Pattern.quote(data);
-		patent_family_size = Integer.valueOf(patent_family);
-		
-		
-		return patent_family_size;
+		return major_market;
 	}
-	*/
+	
+	/* 	
+	 *  Variable Number : 15
+	 *	Method : return the amount of backward citations (foreign & US) from EPO   
+	 * 	Return Type : Integer 
+	 *  Author : Guan-Yu Pan
+	 * 	Last Edit Date : 20120511
+	 *  Example : "http://worldwide.espacenet.com/publicationDetails/citedDocuments?CC=US&NR=RE37489E1&FT=D";
+	 */ 
+	public int getPatentedBackwardCitations(String patent_id){
+	    int patented_backward_citations = 0;
+		
+	    // fetch from EPO
+		try {	
+			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/citedDocuments?CC=US&FT=D&NR="+patent_id+ec).timeout(30000).get();
+			// find the amount of backward citations
+			Element element = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
+			patented_backward_citations = Integer.parseInt(element.text());
+			System.out.println("patented backward citations : "+patented_backward_citations);
+	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return patented_backward_citations;
+	}
+	
+	
+	
+	
+	
+	public String getEC(String patent_id){
+		String ec = ""; 
+		try {
+			Document doc = Jsoup.connect("http://worldwide.espacenet.com/searchResults?query=US"+patent_id).get();
+			Element element = doc.getElementsByClass("publicationInfoColumn").first();
+			String data = element.text();
+			if(data!=null && data.contains("(") && data.contains(")")){
+				ec = data.substring(data.indexOf("(")+1,data.indexOf(")"));
+			}
+			System.out.println("ec : "+ec);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ec;
+	}
 }
