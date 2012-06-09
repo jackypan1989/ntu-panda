@@ -38,13 +38,13 @@ public class Patent{
     
 	public String toString(){
 		String attributes = "";
-		attributes = attributes + "foreign_inventors->" + parameter_foreign_inventors + "\n";
-		attributes = attributes + "foreign_classes->" + parameter_foreign_classes + "\n";
-		attributes = attributes + "patent_family_size->" + parameter_patent_family_size + "\n";
-		attributes = attributes + "patented_backward_citations->" + parameter_patented_backward_citations + "\n";
-		attributes = attributes + "major_market->" + parameter_major_market + "\n";
-		attributes = attributes + "foreign_priority_apps->" + parameter_foreign_priority_apps + "\n";
-		attributes = attributes + "years_to_receive_the_first_citation->" + parameter_years_to_receive_the_first_citation + "\n";
+		attributes = attributes + "foreign_inventors : " + parameter_foreign_inventors + "\n";
+		attributes = attributes + "foreign_classes : " + parameter_foreign_classes + "\n";
+		attributes = attributes + "patent_family_size : " + parameter_patent_family_size + "\n";
+		attributes = attributes + "patented_backward_citations : " + parameter_patented_backward_citations + "\n";
+		attributes = attributes + "major_market : " + parameter_major_market + "\n";
+		attributes = attributes + "foreign_priority_apps : " + parameter_foreign_priority_apps + "\n";
+		attributes = attributes + "years_to_receive_the_first_citation : " + parameter_years_to_receive_the_first_citation + "\n";
 		
 		return attributes;
 	}

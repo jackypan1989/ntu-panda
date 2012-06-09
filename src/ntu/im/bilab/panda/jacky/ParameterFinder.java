@@ -20,12 +20,12 @@ public class ParameterFinder {
 		// TODO Auto-generated method stub
 		ParameterFinder t = new ParameterFinder();
 		
-		Patent patent = new Patent("D242811");
+		Patent patent = new Patent("PP5621");
 		String patent_id = patent.getId();
 		ResultSet new_data = patent.getNewData();
 		ResultSet old_data = patent.getOldData();
 		
-		ec = t.getEC(patent_id);
+		t.getEC(patent_id);
 		try {
 			patent.setParameterForeignInventors(t.getForeignInventors(old_data.getString("Inventors")));
 			patent.setParameterForeignClasses(t.getForeignClasses(old_data.getString("References Cited")));
@@ -169,6 +169,7 @@ public class ParameterFinder {
 	    
 	    // fetch from EPO
 		try {
+			if(ec.equals("")) return -1;
 			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR="+patent_id+ec).get();
 			// find the amount of patent family size
 			Element data = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
@@ -194,6 +195,7 @@ public class ParameterFinder {
 	    int major_market = 1;
 	    // fetch from EPO
 		try {
+			if(ec.equals("")) return -1;
 			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR="+patent_id+ec).get();
 			// find the amount of patent family size
 			Elements elements = doc.getElementsByClass("publicationInfoColumn");
@@ -224,6 +226,7 @@ public class ParameterFinder {
 		
 	    // fetch from EPO
 		try {	
+			if(ec.equals("")) return -1;
 			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/citedDocuments?CC=US&FT=D&NR="+patent_id+ec).timeout(30000).get();
 			// find the amount of backward citations
 			Element element = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
@@ -263,27 +266,36 @@ public class ParameterFinder {
 	    int years_to_receive_the_first_citation = 0;
 		
 	    DataBaseFetcher dbf = new DataBaseFetcher();
-	    years_to_receive_the_first_citation = dbf.getYear(patent,"years_to_receive_the_first_citation")-Integer.parseInt(patent.getYear());
+	    int year = dbf.getYear(patent,"years_to_receive_the_first_citation");
+	    
+	    // not yet receive the first citation
+	    if(year == -1) return -1;
+	    years_to_receive_the_first_citation = year-Integer.parseInt(patent.getYear());
 		
 		return years_to_receive_the_first_citation;
 	}
 	
 	
-	public String getEC(String patent_id){
-		String ec = ""; 
+	public void getEC(String patent_id){
 		try {
 			Document doc = Jsoup.connect("http://worldwide.espacenet.com/searchResults?query=US"+patent_id).get();
 			Element element = doc.getElementsByClass("publicationInfoColumn").first();
 			String data = element.text();
-			if(data!=null && data.contains("(") && data.contains(")")){
-				ec = data.substring(data.indexOf("(")+1,data.indexOf(")"));
+			if(data!=null && data.contains(patent_id)){
+				data = data.substring(data.indexOf(patent_id));
+				if(data.contains("(") && data.contains(")")){
+					ec = data.substring(data.indexOf("(")+1,data.indexOf(")"));
+				}
 			}
-			System.out.println("ec : "+ec);
+			System.out.println("ec for EPO : "+ec);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NullPointerException e){
+			ec = "";
+			System.out.println(patent_id+" cant get ec");
+			//e.printStackTrace();
 		}
-		return ec;
 	}
 }
