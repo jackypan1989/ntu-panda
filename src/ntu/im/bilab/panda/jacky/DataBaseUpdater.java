@@ -16,7 +16,8 @@ public class DataBaseUpdater {
 		try { 
 	        Class.forName(Config.DRIVER); 
 	        conn = DriverManager.getConnection(Config.DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
-	        stmt = conn.createStatement();   
+	        stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  
+                    ResultSet.CONCUR_UPDATABLE);   
 	    } 
 	    catch(ClassNotFoundException e) { 
 	        System.out.println("Can't find driver class"); 
@@ -29,9 +30,9 @@ public class DataBaseUpdater {
 	
 	public void updateParameter(){
 		//4080180 , 136007
-		for(int i=0 ; i<1; i++){
+		for(int i=0 ; i<136007; i++){
 			try {
-	    		ResultSet result = stmt.executeQuery("SELECT Patent_id FROM value LIMIT "+i*30+" , 30");
+	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
 	    		while(result.next()){
 	    			String patent_id = result.getString("Patent_id");
 	    			Patent patent = new Patent(patent_id);
@@ -51,14 +52,24 @@ public class DataBaseUpdater {
 	    			patent.setParameterYearsToReceiveTheFirstCitation(t.getYearsToReceiveTheFirstCitation(patent));
 	    			System.out.println(patent.toString());
 	    			
+	    			result.updateString("DB_Status", "A-1"); 
+	    			result.updateInt("foreign_inventors", patent.getParameterForeignInventors()); 
+	    			result.updateInt("foreign_classes", patent.getParameterForeignClasses()); 
+	    			result.updateInt("family_size", patent.getParameterPatentFamilySize()); 
+	    			result.updateInt("patented_bwd_citations", patent.getParameterPatentedBackwardCitations()); 
+	    			result.updateInt("major_market", patent.getParameterMajorMarket()); 
+	    			result.updateInt("foreign_priority_Apps", patent.getParameterForeignPriorityApps()); 
+	    			result.updateInt("years_receive_first_citations", patent.getParameterYearsToReceiveTheFirstCitation()); 
 	    			
+	    			result.updateRow(); 
+	    			System.out.println(patent_id+" update successed!\n");
 	    		}
 	    	} catch (SQLException e) {
 	    		// TODO Auto-generated catch block
 	    		e.printStackTrace();
 	    	} 
+			System.out.println("complete " + i +" / 136006\n");
 		}
-		
 		
 		
 		/*
