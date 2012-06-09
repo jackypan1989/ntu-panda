@@ -9,7 +9,7 @@ import java.sql.Statement;
 import ntu.im.bilab.panda.core.Config;
 import ntu.im.bilab.panda.database.JdbcMysql;
 
-public class DataBaseFetcher {
+public class DataBaseFetcher extends DataBaseUtility {
 	public Connection conn;
     public Statement stmt;
     

@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 import ntu.im.bilab.panda.core.Config;
 
-public class DataBaseUpdater {
+public class DataBaseUpdater extends DataBaseUtility{
 	public Connection conn;
     public Statement stmt;
 	
@@ -30,7 +30,7 @@ public class DataBaseUpdater {
 	
 	public void updateParameter(){
 		//4080180 , 136007
-		for(int i=0 ; i<136007; i++){
+		for(int i=1 ; i<136007; i++){
 			try {
 	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
 	    		while(result.next()){
@@ -91,5 +91,6 @@ public class DataBaseUpdater {
 	{
 		DataBaseUpdater dbu = new DataBaseUpdater();
 		dbu.updateParameter();
+		dbu.Close();
 	}
 }

@@ -33,6 +33,7 @@ public class Patent{
 		id = patent_id;
 		DataBaseFetcher dbf = new DataBaseFetcher();
 		dbf.getPatentData(this,patent_id);
+		dbf.Close();
 		
 	}
     
