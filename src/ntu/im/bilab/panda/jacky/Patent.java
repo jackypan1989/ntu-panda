@@ -7,7 +7,15 @@ public class Patent{
 	private ResultSet new_data;
 	private String id;
 	private String year;
-
+    private String date;
+    private String inventors;
+    private String assignees;
+    private String abstracts;
+    private String claims;
+    private String descriptions;
+    private String summary;
+    private String title;
+    
 	// data from db patent_value
 	private ResultSet old_data;
 	
@@ -41,6 +49,9 @@ public class Patent{
 		return attributes;
 	}
 	
+	public void update(){
+		
+	}
 	
 	public ResultSet getNewData() {
 		return new_data;
@@ -130,6 +141,70 @@ public class Patent{
 	public void setParameterYearsToReceiveTheFirstCitation(
 			int parameter_years_to_receive_the_first_citation) {
 		this.parameter_years_to_receive_the_first_citation = parameter_years_to_receive_the_first_citation;
+	}
+
+	public String getDescriptions() {
+		return descriptions;
+	}
+
+	public void setDescriptions(String descriptions) {
+		this.descriptions = descriptions;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getInventors() {
+		return inventors;
+	}
+
+	public void setInventors(String inventors) {
+		this.inventors = inventors;
+	}
+
+	public String getAssignees() {
+		return assignees;
+	}
+
+	public void setAssignees(String assignees) {
+		this.assignees = assignees;
+	}
+
+	public String getClaims() {
+		return claims;
+	}
+
+	public void setClaims(String claims) {
+		this.claims = claims;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public String getAbstracts() {
+		return abstracts;
+	}
+
+	public void setAbstracts(String abstracts) {
+		this.abstracts = abstracts;
 	}
 
 	

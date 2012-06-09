@@ -115,15 +115,7 @@ public class DataBaseFetcher {
     	return year;
     }
     
-	public void updateParameter(){
-		int start_year = 1976;
-		int end_year = 2009;
-		for(int i = start_year ; i <= end_year ; i++){
 	
-		
-			
-		}
-	}
 	
 	public static void main(String[] args)
 	{
