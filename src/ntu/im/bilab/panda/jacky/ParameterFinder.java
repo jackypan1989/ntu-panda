@@ -238,6 +238,7 @@ public class ParameterFinder {
 		return patented_backward_citations;
 	}
 	
+	
 	/* 	
 	 *  Variable Number : 52
 	 *	Method : return the number of the foreign priority applications from USPTO   
