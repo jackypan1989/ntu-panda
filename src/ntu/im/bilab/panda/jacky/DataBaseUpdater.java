@@ -30,7 +30,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	
 	public void updateParameter(){
 		//4080180 , 136007
-		for(int i=1 ; i<136007; i++){
+		for(int i=7 ; i<136007; i++){
 			try {
 	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
 	    		while(result.next()){

@@ -178,6 +178,9 @@ public class ParameterFinder {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NullPointerException e){
+			return -1;
+			//e.printStackTrace();
 		}
 		
 		return patent_family_size;
