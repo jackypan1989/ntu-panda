@@ -28,15 +28,16 @@ public class DataBaseUpdater extends DataBaseUtility{
 		} 
 	}
 	
-	public void updateParameter(){
+	public void updateParameter(int thread_id){
 		//4080180 , 136007
-		for(int i=7 ; i<136007; i++){
+		int update_count = 0;
+		for(int i=2720*(thread_id-1) ; i<2720*(thread_id) ; i++){
 			try {
 	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
 	    		while(result.next()){
 	    			String patent_id = result.getString("Patent_id");
 	    			Patent patent = new Patent(patent_id);
-	    			System.out.println(patent_id);
+	    			//System.out.println(patent_id);
 	    			
 	    			ParameterFinder t = new ParameterFinder();
 	    			ResultSet new_data = patent.getNewData();
@@ -50,7 +51,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    			patent.setParameterMajorMarket(t.getMajorMarket(patent_id));
 	    			patent.setParameterForeignPriorityApps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
 	    			patent.setParameterYearsToReceiveTheFirstCitation(t.getYearsToReceiveTheFirstCitation(patent));
-	    			System.out.println(patent.toString());
+	    			//System.out.println(patent.toString());
 	    			
 	    			result.updateString("DB_Status", "A-1"); 
 	    			result.updateInt("foreign_inventors", patent.getParameterForeignInventors()); 
@@ -62,7 +63,11 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    			result.updateInt("years_receive_first_citations", patent.getParameterYearsToReceiveTheFirstCitation()); 
 	    			
 	    			result.updateRow(); 
+	    			update_count++;
+	    			System.out.println("thread_id : "+thread_id);
+	    			System.out.println("this thread progress : "+ update_count);
 	    			System.out.println(patent_id+" update successed!\n");
+	    			
 	    		}
 	    	} catch (SQLException e) {
 	    		// TODO Auto-generated catch block
@@ -90,7 +95,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	public static void main(String[] args)
 	{
 		DataBaseUpdater dbu = new DataBaseUpdater();
-		dbu.updateParameter();
+		//dbu.updateParameter();
 		dbu.Close();
 	}
 }

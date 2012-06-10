@@ -1,6 +1,7 @@
 package ntu.im.bilab.panda.jacky;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -84,12 +85,16 @@ public class ParameterFinder {
 		
 		// clarify the data 
 		// some data loses the inventors field, some data has no assignee 
-		if(!data.contains("Inventors")){
+		try{
+			if(!data.contains("Inventors")){
+				return 0;
+			}else if(!data.contains("Assignee")){
+				data = data.substring(data.indexOf("Inventors")+10,data.indexOf("Appl"));
+			}else{
+				data = data.substring(data.indexOf("Inventors")+10,data.indexOf("Assignee"));
+			}
+		}catch(StringIndexOutOfBoundsException e){
 			return 0;
-		}else if(!data.contains("Assignee")){
-			data = data.substring(data.indexOf("Inventors")+10,data.indexOf("Appl"));
-		}else{
-			data = data.substring(data.indexOf("Inventors")+10,data.indexOf("Assignee"));
 		}
 		
 		// split into inventors array
@@ -177,7 +182,8 @@ public class ParameterFinder {
 			//System.out.println("patent family size : "+patent_family_size);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return -1;
+			//e.printStackTrace();
 		} catch (NullPointerException e){
 			return -1;
 			//e.printStackTrace();
@@ -210,7 +216,8 @@ public class ParameterFinder {
 			//System.out.println("major_market : "+major_market);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return -1;
+			//e.printStackTrace();
 		}
 		
 		return major_market;
@@ -227,9 +234,9 @@ public class ParameterFinder {
 	public int getPatentedBackwardCitations(String patent_id){
 	    int patented_backward_citations = 0;
 		
+	    if(ec.equals("")) return -1;
 	    // fetch from EPO
 		try {	
-			if(ec.equals("")) return -1;
 			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/citedDocuments?CC=US&FT=D&NR="+patent_id+ec).timeout(30000).get();
 			// find the amount of backward citations
 			Element element = doc.getElementsByClass("epoBarItem").first().getElementsByTag("strong").first();
@@ -238,7 +245,8 @@ public class ParameterFinder {
 	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			return -1;
 		}
 		
 		return patented_backward_citations;
@@ -290,11 +298,13 @@ public class ParameterFinder {
 					ec = data.substring(data.indexOf("(")+1,data.indexOf(")"));
 				}
 			}
-			System.out.println("ec for EPO : "+ec);
+			//System.out.println("ec for EPO : "+ec);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ec = "";
+			System.out.println(patent_id+" cant get ec");
+			//e.printStackTrace();
 		} catch (NullPointerException e){
 			ec = "";
 			System.out.println(patent_id+" cant get ec");
