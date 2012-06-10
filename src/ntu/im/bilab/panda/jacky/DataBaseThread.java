@@ -26,7 +26,7 @@ public class DataBaseThread implements Runnable{
 	public static void main(String[] args){
 		ArrayList<Thread> thread_list = new ArrayList<Thread>();
 		
-		for(int i = 0 ; i<50 ; i++){
+		for(int i = 0 ; i<1000 ; i++){
 			thread_list.add(new Thread(new DataBaseThread()));
 		}
 		
