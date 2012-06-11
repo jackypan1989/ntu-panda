@@ -1,10 +1,15 @@
 package ntu.im.bilab.panda.jacky;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import ntu.im.bilab.panda.core.Config;
 import ntu.im.bilab.panda.parameter.ApplicabilityIntegrity;
@@ -99,10 +104,39 @@ public class DataBaseUpdater extends DataBaseUtility{
 		}
 	}
 	
+	public void updateTrainingData(){
+		ArrayList<String> patent_list = new ArrayList<String>();
+		BufferedReader bufferedReader = null;
+		try {
+			bufferedReader = new BufferedReader(new FileReader("worthy_patents.txt"));
+            
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) 
+            	patent_list.add(line.trim());           	
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //Close the BufferedReader
+            try {
+                if (bufferedReader != null)
+                    bufferedReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+		
+		System.out.println(patent_list);
+		
+	}
+	
 	public static void main(String[] args)
 	{
 		DataBaseUpdater dbu = new DataBaseUpdater();
 		//dbu.updateParameter();
+		dbu.updateTrainingData();
 		dbu.Close();
 	}
 }
