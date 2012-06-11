@@ -31,14 +31,14 @@ public class DataBaseUpdater extends DataBaseUtility{
 	public void updateParameter(int thread_id){
 		//4080180 , 136007
 		int update_count = 0;
-		for(int i=272*(thread_id-1) ; i<272*(thread_id) ; i++){
+		for(int i=680*(thread_id-1) ; i<680*(thread_id) ; i++){
 			try {
 	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
 	    		while(result.next()){
+	    			if(result.getString("DB_Status").equals("A-1")) continue;
 	    			String patent_id = result.getString("Patent_id");
 	    			Patent patent = new Patent(patent_id);
 	    			//System.out.println(patent_id);
-	    			
 	    			
 	    			ParameterFinder t = new ParameterFinder();
 	    			ResultSet new_data = patent.getNewData();
