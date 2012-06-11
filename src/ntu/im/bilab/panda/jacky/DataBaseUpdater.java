@@ -35,7 +35,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	public void updateParameter(int thread_id){
 		//4080180 , 136007
 		int update_count = 0;
-		for(int i=2720*(thread_id-1) ; i<2720*(thread_id) ; i++){
+		for(int i=1360*(thread_id-1) ; i<1360*(thread_id) ; i++){
 			try {
 	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
 	    		while(result.next()){

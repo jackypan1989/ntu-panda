@@ -12,12 +12,6 @@ public class DataBaseThread implements Runnable{
 	}
 	
 	public void run(){
-	  /*
-	  for(int i=1; i<=10; i++){ 
-		 //String tName = Thread.currentThread().getName();       
-		  String tName = "T"+thread_id;
-		  System.out.println(tName + ":" + i); 
-	  }*/ 
 	  DataBaseUpdater dbu = new DataBaseUpdater();
 	  dbu.updateParameter(thread_id);
 	  dbu.Close();
@@ -26,7 +20,7 @@ public class DataBaseThread implements Runnable{
 	public static void main(String[] args){
 		ArrayList<Thread> thread_list = new ArrayList<Thread>();
 		
-		for(int i = 0 ; i<50 ; i++){
+		for(int i = 0 ; i<100 ; i++){
 			thread_list.add(new Thread(new DataBaseThread()));
 		}
 		
