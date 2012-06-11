@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import ntu.im.bilab.panda.core.Config;
+import ntu.im.bilab.panda.parameter.ApplicabilityIntegrity;
+import ntu.im.bilab.panda.parameter.Diversity;
+import ntu.im.bilab.panda.parameter.Innovation;
+import ntu.im.bilab.panda.parameter.Profile;
 
 public class DataBaseUpdater extends DataBaseUtility{
 	public Connection conn;
@@ -41,28 +45,45 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    			//System.out.println(patent_id);
 	    			
 	    			ParameterFinder t = new ParameterFinder();
-	    			ResultSet new_data = patent.getNewData();
-	    			ResultSet old_data = patent.getOldData();
-	   
+	    			ResultSet new_data = patent.getNew_data();
+	    			ResultSet old_data = patent.getNew_data();
+	                
 	    			t.getEC(patent_id);
-	    			patent.setParameterForeignInventors(t.getForeignInventors(old_data.getString("Inventors")));
-	    			patent.setParameterForeignClasses(t.getForeignClasses(old_data.getString("References Cited")));
-	    			patent.setParameterPatentFamilySize(t.getPatentFamilySize(patent_id));
-	    			patent.setParameterPatentedBackwardCitations(t.getPatentedBackwardCitations(patent_id));
-	    			patent.setParameterMajorMarket(t.getMajorMarket(patent_id));
-	    			patent.setParameterForeignPriorityApps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
-	    			patent.setParameterYearsToReceiveTheFirstCitation(t.getYearsToReceiveTheFirstCitation(patent));
+	    			patent.setParameter_foreign_inventors(t.getForeignInventors(old_data.getString("Inventors")));
+	    			patent.setParameter_foreign_classes(t.getForeignClasses(old_data.getString("References Cited")));
+	    			patent.setParameter_patent_family_size(t.getPatentFamilySize(patent_id));
+	    			patent.setParameter_patented_backward_citations(t.getPatentedBackwardCitations(patent_id));
+	    			patent.setParameter_major_market(t.getMajorMarket(patent_id));
+	    			patent.setParameter_foreign_priority_apps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
+	    			patent.setParameter_years_to_receive_the_first_citation(t.getYearsToReceiveTheFirstCitation(patent));
 	    			//System.out.println(patent.toString());
 	    			
 	    			result.updateString("DB_Status", "A-1"); 
-	    			result.updateInt("foreign_inventors", patent.getParameterForeignInventors()); 
-	    			result.updateInt("foreign_classes", patent.getParameterForeignClasses()); 
-	    			result.updateInt("family_size", patent.getParameterPatentFamilySize()); 
-	    			result.updateInt("patented_bwd_citations", patent.getParameterPatentedBackwardCitations()); 
-	    			result.updateInt("major_market", patent.getParameterMajorMarket()); 
-	    			result.updateInt("foreign_priority_Apps", patent.getParameterForeignPriorityApps()); 
-	    			result.updateInt("years_receive_first_citations", patent.getParameterYearsToReceiveTheFirstCitation()); 
+	    			result.updateInt("foreign_inventors", patent.getParameter_foreign_inventors()); 
+	    			result.updateInt("foreign_classes", patent.getParameter_foreign_classes()); 
+	    			result.updateInt("family_size", patent.getParameter_patent_family_size()); 
+	    			result.updateInt("patented_bwd_citations", patent.getParameter_patented_backward_citations()); 
+	    			result.updateInt("major_market", patent.getParameter_patent_family_size()); 
+	    			result.updateInt("foreign_priority_Apps", patent.getParameter_foreign_priority_apps()); 
+	    			result.updateInt("years_receive_first_citations", patent.getParameter_years_to_receive_the_first_citation()); 
 	    			
+	    			patent.getOldParameter();
+	    			
+	    			result.updateInt("diversity_USPC",patent.getParameter_diversity_USPC());
+	    			result.updateInt("num_of_claims",patent.getParameter_num_of_claims());
+	    			result.updateInt("num_of_indep_claims",patent.getParameter_num_of_indep_claims());
+	    			result.updateInt("num_of_dep_claims",patent.getParameter_num_of_dep_claims());
+	    			result.updateInt("num_of_bwd_citations",patent.getParameter_num_of_bwd_citations());
+	    			result.updateInt("science_linkage",patent.getParameter_science_linkage());
+	    			result.updateInt("originality_USPC",patent.getParameter_originality_USPC());
+	    			result.updateInt("generality_USPC",patent.getParameter_generality_USPC());
+	    			result.updateInt("extensive_generality",0);
+	    			result.updateInt("num_of_assignee_transfer",patent.getParameter_num_of_assignee_transfer());
+	    			result.updateInt("num_of_patent_group",patent.getParameter_num_of_patent_group());
+	    			result.updateInt("approval_time",(int)patent.getParameter_approval_time());
+	    			result.updateInt("num_of_assignee",patent.getParameter_num_of_assignee());
+	    			result.updateInt("num_of_citing_USpatent",patent.getParameter_num_of_citing_USpatent());
+	    		    
 	    			result.updateRow(); 
 	    			update_count++;
 	    			System.out.println("thread_id : "+thread_id);
@@ -76,21 +97,6 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    	} 
 			System.out.println("complete " + i +" / 136006\n");
 		}
-		
-		
-		/*
-	    for(int i=0 ; i<20 ; i++){
-	    	try {
-	    		ResultSet result = stmt.executeQuery("SELECT Patent_id FROM value LIMIT 0 , 10000");
-	    		while(result.next()){
-	    			result.getString("Patent_id");
-	    			
-	    		}
-	    	} catch (SQLException e) {
-	    		// TODO Auto-generated catch block
-	    		e.printStackTrace();
-	    	} 
-	    }*/
 	}
 	
 	public static void main(String[] args)

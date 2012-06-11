@@ -20,8 +20,7 @@ public class Profile {
 	
 	private int inventors,	
 				assignees, 				
-				citations,
-				foreign_inventors;
+				citations;
 	
 	private long approve_time;
 	
@@ -36,7 +35,6 @@ public class Profile {
 		assignees = 0;
 		approve_time = 0;
 		citations = 0;
-		foreign_inventors = 0;
 		Connect_DB();
 		patent_tableName = Find_table(patent_id);		
 		selectSQL = "select Patent_id,Inventors, `Issued date`,`References Cited` from "+ patent_tableName + " where Patent_id =" + "'" + Patent_ID + "'" ;
@@ -187,7 +185,6 @@ public class Profile {
 		    		String[] splited_temp = temp.split(":");
 		    		String[] inventor_count = splited_temp[1].split(";");
 		    		inventors = inventor_count.length;
-		    		findForeignInventors(inventor_count);
 		    		filed_date = splited_temp[splited_temp.length-1].trim();		    		
 		    		if(temp.contains("Assignee")==true)
 					  {
@@ -199,7 +196,6 @@ public class Profile {
 		    	}
 		    	else
 				{
-		    		foreign_inventors = 0;
 		    		inventors = 0;
 					assignees = 0;
 					approve_time = 0;
@@ -286,37 +282,6 @@ public class Profile {
 		//select info and count the value of all variables and disconnect DB
 		p.SelectTable();
 		p.PrintAll();
-	}
-	
-	// jacky
-	public void findForeignInventors(String[] inventors){
-		
-		// uspto patent state code in usa
-		String[] us_states = {"AK","AL","AR","AZ","CA","CO","CT","CZ","DC","DE",
-				              "FL","GA","HI","IA","ID","IL","IN","KS","KY","LA",
-				              "MA","MD","ME","MI","MN","MO","MS","MT","NE","NC",
-				              "ND","NH","NJ","NM","NY","NV","OH","OK","OR","PA",
-				              "PR","RI","SC","SD","TN","TX","UT","VA","VI","VT",
-				              "WA","WI","WY","NB"}; 
-		
-		// flag that amount of inventors in the same state or country
-		int same_state = 0 ;
-		
-		for (int i=0 ; i<inventors.length ; i++){
-			System.out.println(inventors[i]);
-			if(inventors[i].contains("(")){
-				
-				
-				
-			}else{
-				same_state++;
-			}
-		}
-		
-		
-		
-		
-		
 	}
 		
 }

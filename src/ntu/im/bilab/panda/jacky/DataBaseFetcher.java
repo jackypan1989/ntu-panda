@@ -57,7 +57,7 @@ public class DataBaseFetcher extends DataBaseUtility {
 			// for new database
 			ResultSet result = getTuple(patent_id);
 			String year = result.getString("Issued_Year");
-		    patent.setNewData(result);
+		    patent.setNew_data(result);
 			patent.setYear(year);
 		
 			// for old database
@@ -77,7 +77,7 @@ public class DataBaseFetcher extends DataBaseUtility {
 			Statement stmt = conn.createStatement();
 			ResultSet result = stmt.executeQuery("select * from uspto_"+ year + " where Patent_id =" + "'" + patent_id + "'");
 			result.next();
-			patent.setOldData(result);
+			patent.setOld_data(result);
 
     	} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

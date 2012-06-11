@@ -23,23 +23,25 @@ public class ParameterFinder {
 		
 		Patent patent = new Patent("PP5621");
 		String patent_id = patent.getId();
-		ResultSet new_data = patent.getNewData();
-		ResultSet old_data = patent.getOldData();
-		
+		ResultSet new_data = patent.getNew_data();
+		ResultSet old_data = patent.getNew_data();
+        
 		t.getEC(patent_id);
 		try {
-			patent.setParameterForeignInventors(t.getForeignInventors(old_data.getString("Inventors")));
-			patent.setParameterForeignClasses(t.getForeignClasses(old_data.getString("References Cited")));
-			patent.setParameterPatentFamilySize(t.getPatentFamilySize(patent_id));
-			patent.setParameterPatentedBackwardCitations(t.getPatentedBackwardCitations(patent_id));
-			patent.setParameterMajorMarket(t.getMajorMarket(patent_id));
-			patent.setParameterForeignPriorityApps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
+			patent.setParameter_foreign_inventors(t.getForeignInventors(old_data.getString("Inventors")));
+			patent.setParameter_foreign_classes(t.getForeignClasses(old_data.getString("References Cited")));
+			patent.setParameter_patent_family_size(t.getPatentFamilySize(patent_id));
+			patent.setParameter_patented_backward_citations(t.getPatentedBackwardCitations(patent_id));
+			patent.setParameter_major_market(t.getMajorMarket(patent_id));
+			patent.setParameter_foreign_priority_apps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
+			patent.setParameter_years_to_receive_the_first_citation(t.getYearsToReceiveTheFirstCitation(patent));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		patent.setParameterYearsToReceiveTheFirstCitation(t.getYearsToReceiveTheFirstCitation(patent));
 		
+		patent.getOldParameter();
+	
 		System.out.println(patent.toString());
 		
 	}
