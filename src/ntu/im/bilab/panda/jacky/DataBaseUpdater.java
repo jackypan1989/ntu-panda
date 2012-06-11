@@ -39,6 +39,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    			Patent patent = new Patent(patent_id);
 	    			//System.out.println(patent_id);
 	    			
+	    			
 	    			ParameterFinder t = new ParameterFinder();
 	    			ResultSet new_data = patent.getNewData();
 	    			ResultSet old_data = patent.getOldData();
