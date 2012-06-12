@@ -56,12 +56,13 @@ public class DataBaseFetcher extends DataBaseUtility {
 		try {
 			// for new database
 			ResultSet result = getTuple(patent_id);
+			if(result == null) return;
 			String year = result.getString("Issued_Year");
 		    patent.setNew_data(result);
 			patent.setYear(year);
 		
 			// for old database
-			//getOldDataBaseContent(patent, patent_id, year);
+			getOldDataBaseContent(patent, patent_id, year);
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -38,11 +38,13 @@ public class DataBaseUpdater extends DataBaseUtility{
 	}
 	
 	public void updateParameter(int thread_id){
-		//4080180 , 136007
+		// 4080180 , 136007
+		// v_p 75
+		// v_n 118
 		int update_count = 0;
-		for(int i=1360*(thread_id-1) ; i<1360*(thread_id) ; i++){
+		for(int i=4*(thread_id-1) ; i<4*(thread_id) && i<75 ; i++){
 			try {
-	    		ResultSet result = stmt.executeQuery("SELECT * FROM value LIMIT "+i*30+" , 30");
+	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive LIMIT "+i*30+" , 30");
 	    		while(result.next()){
 	    			//if(result.getString("DB_Status").equals("A-1")) continue;
 	    			String patent_id = result.getString("Patent_id");
@@ -108,7 +110,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 		ArrayList<String> patent_list = new ArrayList<String>();
 		BufferedReader bufferedReader = null;
 		try {
-			bufferedReader = new BufferedReader(new FileReader("worthy_patents.txt"));
+			bufferedReader = new BufferedReader(new FileReader("unworthy_patents.txt"));
             
             String line = null;
             while ((line = bufferedReader.readLine()) != null) 
@@ -131,6 +133,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 		
 		for(String patent_id : patent_list) {
 			Patent patent = new Patent(patent_id);
+			System.out.println(patent_id);
 			try {
 				stmt.executeUpdate("INSERT INTO  `patent_value`.`value_negative` " +
 						"(`Patent_id` ,`DB_Status` ,`Patent_year` ,`inventors` ,`foreign_inventors` ," +
@@ -141,12 +144,12 @@ public class DataBaseUpdater extends DataBaseUtility{
 						"`years_receive_first_citations` ,`approval_time` ,	`num_of_assignee` ,	`num_of_citing_USpatent`)" +
 						" VALUES ('"+patent.getId()+"',  '',  '"+patent.getYear()+"',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0'" +
 						",  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0')");
-				
+				System.out.println(patent_id+" has been inserted");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(patent_id+" has been inserted");
+			
 		}
 	}
 	
@@ -154,7 +157,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	{
 		DataBaseUpdater dbu = new DataBaseUpdater();
 		//dbu.updateParameter();
-		dbu.updateTrainingData();
+		//dbu.updateTrainingData();
 		dbu.Close();
 	}
 }
