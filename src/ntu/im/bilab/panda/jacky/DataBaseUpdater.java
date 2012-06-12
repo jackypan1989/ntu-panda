@@ -127,9 +127,27 @@ public class DataBaseUpdater extends DataBaseUtility{
                 e.printStackTrace();
             }
         }
-		
 		System.out.println(patent_list);
 		
+		for(String patent_id : patent_list) {
+			Patent patent = new Patent(patent_id);
+			try {
+				stmt.executeUpdate("INSERT INTO  `patent_value`.`value_negative` " +
+						"(`Patent_id` ,`DB_Status` ,`Patent_year` ,`inventors` ,`foreign_inventors` ," +
+						"`diversity_USPC` ,`foreign_classes` ,`family_size` ,`major_market` ,`num_of_claims` ," +
+						"`num_of_indep_claims` ,`num_of_dep_claims` ,`patented_bwd_citations` ,	`num_of_bwd_citations` ," +
+						"`science_linkage` ,`originality_USPC` ,`generality_USPC` ,	`extensive_generality` ," +
+						"`num_of_assignee_transfer` ,`num_of_patent_group` ,`foreign_priority_Apps` ," +
+						"`years_receive_first_citations` ,`approval_time` ,	`num_of_assignee` ,	`num_of_citing_USpatent`)" +
+						" VALUES ('"+patent.getId()+"',  '',  '"+patent.getYear()+"',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0'" +
+						",  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0')");
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(patent_id+" has been inserted");
+		}
 	}
 	
 	public static void main(String[] args)

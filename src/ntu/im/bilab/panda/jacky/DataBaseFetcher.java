@@ -61,7 +61,7 @@ public class DataBaseFetcher extends DataBaseUtility {
 			patent.setYear(year);
 		
 			// for old database
-			getOldDataBaseContent(patent, patent_id, year);
+			//getOldDataBaseContent(patent, patent_id, year);
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
