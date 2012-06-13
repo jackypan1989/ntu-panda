@@ -38,20 +38,22 @@ public class DataBaseUpdater extends DataBaseUtility{
 		// v_p 75
 		// v_n 118
 		int update_count = 0;
-		for(int i=16*(thread_id-1) ; i<16*(thread_id) && i<75 ; i++){
 			try {
-	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive LIMIT "+i*30+" , 30");
+	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive WHERE `inventors`=' ' ORDER BY `value_positive`.`DB_Status` ASC ");
+	    		//System.out.println(result.getRow());
 	    		while(result.next()){
-	    			//if(result.getString("DB_Status").equals("A-1")) continue;
+	    			if(result.getString("DB_Status").equals("A-2")) continue;
 	    			String patent_id = result.getString("Patent_id");
 	    			Patent patent = new Patent(patent_id);
 	    			//System.out.println(patent_id);
 	    			
 	    			ParameterFinder t = new ParameterFinder();
-	    			ResultSet new_data = patent.getNew_data();
+	    			//ResultSet new_data = patent.getNew_data();
 	    			ResultSet old_data = patent.getOld_data();
 	                
 	    			t.getEC(patent_id);
+	    			System.out.println(old_data.getString("Inventors"));
+	    			patent.setParameter_inventors(t.getInventors(old_data.getString("Inventors")));
 	    			patent.setParameter_foreign_inventors(t.getForeignInventors(old_data.getString("Inventors")));
 	    			patent.setParameter_foreign_classes(t.getForeignClasses(old_data.getString("References Cited")));
 	    			patent.setParameter_patent_family_size(t.getPatentFamilySize(patent_id));
@@ -61,7 +63,8 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    			patent.setParameter_years_to_receive_the_first_citation(t.getYearsToReceiveTheFirstCitation(patent));
 	    			//System.out.println(patent.toString());
 	    			
-	    			result.updateString("DB_Status", "A-1"); 
+	    			result.updateString("DB_Status", "A-2"); 
+	    			result.updateInt("inventors", patent.getParameter_inventors()); 
 	    			result.updateInt("foreign_inventors", patent.getParameter_foreign_inventors()); 
 	    			result.updateInt("foreign_classes", patent.getParameter_foreign_classes()); 
 	    			result.updateInt("family_size", patent.getParameter_patent_family_size()); 
@@ -98,8 +101,8 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    		// TODO Auto-generated catch block
 	    		e.printStackTrace();
 	    	}
-			System.out.println("complete " + i +" / 136006\n");
-		}
+			//System.out.println("complete " + i +" / 136006\n");
+		
 	}
 	
 	public void updateTrainingData(){
@@ -152,7 +155,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	public static void main(String[] args)
 	{
 		DataBaseUpdater dbu = new DataBaseUpdater();
-		//dbu.updateParameter();
+		dbu.updateParameter(1);
 		//dbu.updateTrainingData();
 		dbu.Close();
 	}
