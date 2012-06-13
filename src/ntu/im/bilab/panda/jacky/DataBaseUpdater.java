@@ -12,10 +12,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import ntu.im.bilab.panda.core.Config;
-import ntu.im.bilab.panda.parameter.ApplicabilityIntegrity;
-import ntu.im.bilab.panda.parameter.Diversity;
-import ntu.im.bilab.panda.parameter.Innovation;
-import ntu.im.bilab.panda.parameter.Profile;
 
 public class DataBaseUpdater extends DataBaseUtility{
 	public Connection conn;
@@ -42,7 +38,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 		// v_p 75
 		// v_n 118
 		int update_count = 0;
-		for(int i=4*(thread_id-1) ; i<4*(thread_id) && i<75 ; i++){
+		for(int i=16*(thread_id-1) ; i<16*(thread_id) && i<75 ; i++){
 			try {
 	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive LIMIT "+i*30+" , 30");
 	    		while(result.next()){
@@ -101,7 +97,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    	} catch (SQLException e) {
 	    		// TODO Auto-generated catch block
 	    		e.printStackTrace();
-	    	} 
+	    	}
 			System.out.println("complete " + i +" / 136006\n");
 		}
 	}
