@@ -21,10 +21,10 @@ public class ParameterFinder {
 		// TODO Auto-generated method stub
 		ParameterFinder t = new ParameterFinder();
 		
-		Patent patent = new Patent("PP5621");
+		Patent patent = new Patent("5110638");
 		String patent_id = patent.getId();
 		ResultSet new_data = patent.getNew_data();
-		ResultSet old_data = patent.getNew_data();
+		ResultSet old_data = patent.getOld_data();
         
 		t.getEC(patent_id);
 		try {
