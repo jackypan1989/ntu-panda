@@ -1,17 +1,22 @@
 package ntu.im.bilab.panda.jacky;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import ntu.im.bilab.panda.parameter.ApplicabilityIntegrity;
 import ntu.im.bilab.panda.parameter.Diversity;
 import ntu.im.bilab.panda.parameter.Innovation;
 import ntu.im.bilab.panda.parameter.Profile;
 
-import weka.core.Attribute;
-
 public class Patent{
-	// data from db mypaper
+	
+	// data from database "mypaper"
 	private ResultSet new_data;
+	
+	// data from database "patent_value"
+	private ResultSet old_data;
+	
+	// baseline
 	private String id;
 	private String year;
     private String date;
@@ -22,11 +27,9 @@ public class Patent{
     private String descriptions;
     private String summary;
     private String title;
-    
-	// data from db patent_value
-	private ResultSet old_data;
 	
-	// 7 parameter (jacky)
+	// 8 parameter (Jacky)
+    private int parameter_inventors;
 	private int parameter_foreign_inventors;
 	private int parameter_foreign_classes;
 	private int parameter_patent_family_size;
@@ -35,8 +38,7 @@ public class Patent{
 	private int parameter_foreign_priority_apps;
 	private int parameter_years_to_receive_the_first_citation;
 	
-	// 14 old parameter (lab)
-	private int parameter_inventors;
+	// 14 old parameter (Lab)
 	private int parameter_diversity_USPC;
 	private int parameter_num_of_claims;
 	private int parameter_num_of_indep_claims;
@@ -52,15 +54,34 @@ public class Patent{
 	private int parameter_num_of_assignee;
 	private int parameter_num_of_citing_USpatent;
 	
+	// constructor
 	public Patent(String patent_id) {
 		// TODO Auto-generated constructor stub
 		id = patent_id;
 		DataBaseFetcher dbf = new DataBaseFetcher();
 		dbf.getPatentData(this,patent_id);
 		dbf.Close();
-		
 	}
-
+    
+	public void setBaseline(){
+		try {
+			id = new_data.getString("id");
+			year = new_data.getString("id");
+		    date = new_data.getString("id");
+		    inventors = new_data.getString("id");
+		    assignees = new_data.getString("id");
+		    abstracts = new_data.getString("id");
+		    claims = new_data.getString("id");
+		    descriptions = new_data.getString("id");
+		    summary = new_data.getString("id");
+		    title = new_data.getString("id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void getOldParameter(){
 		String patent_id = this.getId();
 		Innovation inno = new Innovation(patent_id);
