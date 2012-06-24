@@ -38,6 +38,9 @@ public class Patent{
 	private int parameter_foreign_priority_apps;
 	private int parameter_years_to_receive_the_first_citation;
 	
+	//1 parameter (Ivy)
+	private int parameter_patent_family_volume;
+	
 	// 14 old parameter (Lab)
 	private int parameter_diversity_USPC;
 	private int parameter_num_of_claims;
@@ -115,6 +118,7 @@ public class Patent{
 		attributes = attributes + "major_market : " + parameter_major_market + "\n";
 		attributes = attributes + "foreign_priority_apps : " + parameter_foreign_priority_apps + "\n";
 		attributes = attributes + "years_to_receive_the_first_citation : " + parameter_years_to_receive_the_first_citation + "\n";
+		attributes = attributes + "patent_family_volume : " + parameter_patent_family_volume + "\n"; //ivy
 		
 		return attributes;
 	}
@@ -395,5 +399,9 @@ public class Patent{
 			int parameter_num_of_citing_USpatent) {
 		this.parameter_num_of_citing_USpatent = parameter_num_of_citing_USpatent;
 	}
-
+   
+	//ivy
+	public void setParameter_patent_family_volume(int parameter_patent_family_volume) {
+		this.parameter_patent_family_volume = parameter_patent_family_volume;
+	}
 }

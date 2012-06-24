@@ -35,6 +35,7 @@ public class ParameterFinder {
 			patent.setParameter_major_market(t.getMajorMarket(patent_id));
 			patent.setParameter_foreign_priority_apps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
 			patent.setParameter_years_to_receive_the_first_citation(t.getYearsToReceiveTheFirstCitation(patent));
+			patent.setParameter_patent_family_volume(t.getPatentFamilyVolume(patent_id));  //ivy
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,7 +74,7 @@ public class ParameterFinder {
 		int total_inventors = inventors.length-1;
 		//System.out.println("inventors : "+total_inventors);
 		return total_inventors;
-	}		
+	}	
 	
 	/* 	
 	 *  Variable Number : 2
@@ -161,6 +162,72 @@ public class ParameterFinder {
 		}
 		//System.out.println("foreign_classes : "+foreign_classes);
 		return foreign_classes;
+	}
+	
+	/* 	
+	 *  Variable Number : 7
+	 *	Method : return the size of patent family Volume from EPO (nations)  
+	 * 	Return Type : Integer 
+	 *  Author : Ivy Hoi
+	 * 	Last Edit Date : 20120624
+	 *  Example : "http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR=5110638A";
+	 *  Example "data" : "data: Publication info: AU645797?(B2) 1994-01-27 Publication info: AU7571191?(A) 1991-10-21 Publication info: CA2077334?(A1) 1991-09-20 CA2077334?(C) 2001-07-10 
+	 *                     Publication info: EP0521062?(A1) 1993-01-07 EP0521062?(A4) 1993-03-10 Publication info: IL97546?(A) 1994-10-21 Publication info: JPH05505571?(A) 1993-08-19 Publication info: US5110638?(A) 1992-05-05 Publication info: WO9114571?(A1) 1991-10-03";
+	 */ 
+	public int getPatentFamilyVolume(String patent_id){
+	    int patent_family_volume = 0;
+	  
+	    // fetch from EPO
+		try {
+			if(ec.equals("")) return -1;
+			Document doc = Jsoup.connect("http://worldwide.espacenet.com/publicationDetails/inpadocPatentFamily?CC=US&FT=D&NR="+patent_id+ec).get();
+			// find the amount of patent family size
+			Elements elements = doc.getElementsByClass("publicationInfoColumn");
+			String data = elements.text();
+			
+			if(data.contains("Publication info: ")){
+				String publication_info=data.replace("Publication info: ","");
+				if(publication_info.contains(" ")){
+					String[] publications_array = publication_info.split(" ");
+					String market_array[] = new String[publications_array.length];
+					String market="";
+					for(int i=0; i<publications_array.length; i=i+2){
+						market = publications_array[i].substring(0, 2);
+						boolean is_market_exist = false;
+						if(i==0){
+							market_array[i]=market;
+							patent_family_volume++;
+						}
+						else{
+							for(int j=0; j<patent_family_volume; j++){
+								if(market.equals(market_array[j])) {
+									is_market_exist = true;
+									break;
+								}
+							}
+						}
+						if(!is_market_exist && i!=0){
+							market_array[patent_family_volume] = market;
+							patent_family_volume++;
+						}
+					}
+				}
+				else{
+					return -1;
+				}
+			}
+			else{
+				return -1;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			return -1;
+			//e.printStackTrace();
+		} catch (NullPointerException e){
+			return -1;
+			//e.printStackTrace();
+		}
+		return patent_family_volume;
 	}
 	
 	/* 	
