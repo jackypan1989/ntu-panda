@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.sql.Connection;
 
+import ntu.im.bilab.panda.core.Config;
 import ntu.im.bilab.panda.parameter.Diversity;
 
 public class ForwardCite {
@@ -72,8 +73,8 @@ public class ForwardCite {
 	//µ¹ patent_id ±o¨ìissuedDate ex:December 29, 1981
 	static String getDateById(String patent_id, int patent_year) throws Exception{
 		String date = null;
-		Class.forName(driver);
-		Connection conn = DriverManager.getConnection(url, user, password);
+		Class.forName(Config.DRIVER);
+		Connection conn = DriverManager.getConnection(Config.NEW_DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
 		if(conn!=null && !conn.isClosed()){
 				Statement stmt = conn.createStatement();
 				String selectSQL = "SELECT `Issued_Date` FROM `content_"+patent_year+"` WHERE `Patent_id` ='"+patent_id+"'";
@@ -103,8 +104,8 @@ public class ForwardCite {
 		Map<String,Integer> fwPatents = new TreeMap<String,Integer>();
 		
 		try{
-			Class.forName(driver);
-			Connection conn = DriverManager.getConnection(url, user, password);
+			Class.forName(Config.DRIVER);
+			Connection conn = DriverManager.getConnection(Config.NEW_DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
 			if(conn!=null && !conn.isClosed()){
 				for(int i = patent_year; i<=highestYear; i++){
 					Statement stmt = conn.createStatement();
@@ -169,8 +170,8 @@ public class ForwardCite {
 	static String getAssignee(String patent_id, int patent_year) throws Exception{
 		String assignee = "";
 	
-		Class.forName(driver);
-		Connection conn = DriverManager.getConnection(url, user, password);
+		Class.forName(Config.DRIVER);
+		Connection conn = DriverManager.getConnection(Config.NEW_DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
 		if(conn!=null && !conn.isClosed()){
 			Statement stmt = conn.createStatement();
 			String selectSQL = "SELECT `Assignee` FROM `content_"+patent_year+"` WHERE `Patent_id` ='"+patent_id+"'";
@@ -239,8 +240,8 @@ public class ForwardCite {
 				"Field of Search:   ";*/
 		String str = "";
 		try{
-			Class.forName(driver);
-			Connection conn = DriverManager.getConnection(urlMain, userMain, passwordMain);
+			Class.forName(Config.DRIVER);
+			Connection conn = DriverManager.getConnection(Config.DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
 			if(conn!=null && !conn.isClosed()){
 				Statement stmt = conn.createStatement();
 				String selectSQL = "SELECT `Current U.S. Class` FROM `uspto_"+patent_year+"` WHERE `Patent_id` ='"+patent_id+"'";
@@ -295,8 +296,8 @@ public class ForwardCite {
 		String mainccl = "";
 		
 		try{
-			Class.forName(driver);
-			Connection conn = DriverManager.getConnection(url, user, password);
+			Class.forName(Config.DRIVER);
+			Connection conn = DriverManager.getConnection(Config.NEW_DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
 			if(conn!=null && !conn.isClosed()){
 				Statement stmt = conn.createStatement();
 				String selectSQL = "SELECT `mainclass` FROM `patent-mainccl_"+patent_year+"` WHERE `Patent_id` ='"+patent_id+"'";
