@@ -39,10 +39,11 @@ public class DataBaseUpdater extends DataBaseUtility{
 		// v_n 118
 		int update_count = 0;
 			try {
-	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive WHERE `inventors`=' ' ORDER BY `value_positive`.`DB_Status` ASC ");
+	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_negative");
+	    		//ResultSet result = stmt.executeQuery("SELECT * FROM value_positive ORDER BY `value_positive`.`DB_Status` ASC ");
 	    		//System.out.println(result.getRow());
 	    		while(result.next()){
-	    			if(result.getString("DB_Status").equals("A-2")) continue;
+	    			if(result.getString("DB_Status").equals("A-1")) continue;
 	    			String patent_id = result.getString("Patent_id");
 	    			Patent patent = new Patent(patent_id);
 	    			//System.out.println(patent_id);
@@ -63,13 +64,13 @@ public class DataBaseUpdater extends DataBaseUtility{
 	    			patent.setParameter_years_to_receive_the_first_citation(t.getYearsToReceiveTheFirstCitation(patent));
 	    			//System.out.println(patent.toString());
 	    			
-	    			result.updateString("DB_Status", "A-2"); 
+	    			result.updateString("DB_Status", "A-1"); 
 	    			result.updateInt("inventors", patent.getParameter_inventors()); 
 	    			result.updateInt("foreign_inventors", patent.getParameter_foreign_inventors()); 
 	    			result.updateInt("foreign_classes", patent.getParameter_foreign_classes()); 
 	    			result.updateInt("family_size", patent.getParameter_patent_family_size()); 
 	    			result.updateInt("patented_bwd_citations", patent.getParameter_patented_backward_citations()); 
-	    			result.updateInt("major_market", patent.getParameter_patent_family_size()); 
+	    			result.updateInt("major_market", patent.getParameter_major_market()); 
 	    			result.updateInt("foreign_priority_Apps", patent.getParameter_foreign_priority_apps()); 
 	    			result.updateInt("years_receive_first_citations", patent.getParameter_years_to_receive_the_first_citation()); 
 	    			
