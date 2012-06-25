@@ -29,7 +29,7 @@ public class Diversity {
 	private void findInstance() {
 		try {
 			//連接資料庫
-			url="jdbc:mysql://140.112.107.122/mypaper?user=root&password=1234&autoReconnect=true";//小蛇
+			url="jdbc:mysql://140.112.107.207/mypaper?user=root&password=123456&autoReconnect=true";//小蛇
 			conn = DriverManager.getConnection(url);
 			//System.out.println(Patent_id);
 			String selectSQL = null;
