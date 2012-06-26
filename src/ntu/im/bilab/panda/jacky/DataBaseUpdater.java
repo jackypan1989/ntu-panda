@@ -161,6 +161,9 @@ public class DataBaseUpdater extends DataBaseUtility {
 				while (iterator.hasNext()) {  
 				   String key = iterator.next().toString();  
 				   String value = params.get(key).toString();
+				   if(key.equals("originality_USPC") || key.equals("generality_USPC") || key.equals("extensive_generality")){
+					   result.updateFloat(key, Float.parseFloat(value));
+				   }
 				   result.updateInt(key, Integer.parseInt(value));
 				}
 				
