@@ -115,7 +115,7 @@ public class Patent {
 		ApplicabilityIntegrity AI = new ApplicabilityIntegrity(patent_id);
         
 		// put r99's parameters to params map		
-		params.put("inventors",""+prof.GetInventors());
+		//params.put("inventors",""+prof.GetInventors());
 		params.put("diversity_USPC",""+div.GetTechScope());
 		params.put("num_of_claims",""+AI.NoClaims());
 		params.put("num_of_indep_claims",""+AI.NoIndepClaim());
@@ -152,6 +152,7 @@ public class Patent {
 		return params;
 	}
 	
+	/*
 	public void getOldParameter() {
 		String patent_id = this.getId();
 		Innovation inno = new Innovation(patent_id);
@@ -174,7 +175,7 @@ public class Patent {
 		parameter_approval_time = prof.GetApproveTime();
 		parameter_num_of_assignee = prof.GetAssignee();
 		parameter_num_of_citing_USpatent = prof.GetCitation();
-	}
+	}*/
 
 	public ResultSet getNew_data() {
 		return new_data;

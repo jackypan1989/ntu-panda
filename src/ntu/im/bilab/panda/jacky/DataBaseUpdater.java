@@ -160,9 +160,7 @@ public class DataBaseUpdater extends DataBaseUtility {
 				result.updateString("DB_Status", "A-1");
 				while (iterator.hasNext()) {  
 				   String key = iterator.next().toString();  
-				   String value = params.get(key).toString();  
-				   
-				   System.out.println(key + " " + value); 
+				   String value = params.get(key).toString();
 				   result.updateInt(key, Integer.parseInt(value));
 				}
 				
@@ -170,7 +168,7 @@ public class DataBaseUpdater extends DataBaseUtility {
 				update_count++;
 				System.out.println("thread_id : " + thread_id);
 				System.out.println("this thread progress : " + update_count);
-				System.out.println(patent_id + " update successed!\n");
+				System.out.println("patent "+patent_id + " update successed!\n");
 
 			}
 		} catch (SQLException e) {
