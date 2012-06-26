@@ -11,7 +11,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+/*
+ * Author: kobuta
+ * Number of variables: 2
+ * 1.OriginalityIndexIPC = originality index by IPC
+ * 2.OriginalityIndexUSPC = originality index by USPC
+ * No.1 & 2 use OriginIndex(PatentID)
+ */
 public class Originality {
 
 	static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -26,30 +32,24 @@ public class Originality {
 	private Connection connection = null;
 	private Statement statement = null;
 	private ResultSet resultSet = null;
-	
 	private Connection connection2 = null;
 	private Statement statement2 = null;
 	private ResultSet resultSet2 = null; 
 	
 	private String bwd_result = null;
 	private String[] bwd_patent = null;
-	private float OriginalityIndexIPC;
-	private float OriginalityIndexUSPC;
+	private float OriginalityIndexIPC = 0;
+	private float OriginalityIndexUSPC= 0;
 	private float CumulateIndexIPC = 0;
 	private float CumulateIndexUSPC = 0;
 	private Map<String, Integer> IPCMap;
 	private Map< String, Integer > USPCMap;
 	private int NumberOfBwd = 0;
 	private int focal_year = 0;
-
 	
-	public float GetOriIndexIPC(){
-		return OriginalityIndexIPC;
-	}
-	public float GetOriIndexUSPC(){
-		return OriginalityIndexUSPC;
-	}
-	
+	/*
+	 * connect to database
+	 */
 	public void Open(){
 		try {
 			Class.forName( DRIVER );
@@ -112,7 +112,9 @@ public class Originality {
 		      System.out.println("Close Exception :" + e.toString());
 		    }
 		  }
-	
+	/*
+	 * select data from database
+	 */
 	public void GetTable(String pid) throws SQLException
 	{//search table content_1976-2009
 		int year;
@@ -128,13 +130,15 @@ public class Originality {
 			}	
 		}
 	}
+	/*
+	 * main part of this program
+	 */
 	public String GetMainIPClass(int pYear,String pID) throws SQLException{
 		//find the Main IPC for a particular patent
 		String selectSQL_IPC = "SELECT `main_IPC_class` FROM `patent-mainclass_"+ pYear +"` WHERE `Patent_id`='"+pID+"'";
 		ResultSet resultIPC = statement.executeQuery(selectSQL_IPC);
 		if(resultIPC.absolute(1) == true){
 			String tmpIPC = resultIPC.getString("main_IPC_class");
-			//System.out.println("GetMainIPC "+tmpIPC+" in "+pYear);
 			return tmpIPC;
 		}
 		else{
@@ -148,7 +152,6 @@ public class Originality {
 		ResultSet resultUSPC = statement.executeQuery(selectSQL_USPC);
 		if(resultUSPC.absolute(1) == true){
 			String tmpUSPC = resultUSPC.getString("mainclass");
-			//System.out.println("GetMainUSPC "+tmpUSPC+" in "+pYear);
 			return tmpUSPC;
 		}
 		else{
@@ -164,106 +167,100 @@ public class Originality {
 		CumulateIndexUSPC  = (float)CumulateIndexUSPC + (tmp*tmp);
 	}
 	public void OriginIndex( String PatentID) throws SQLException{
+		
 		GetTable(PatentID);
 		if(resultSet.absolute(1) != false){
 			bwd_result = resultSet.getString("References Cited");
 			IPCMap = new HashMap<String, Integer>();
 			USPCMap = new HashMap<String, Integer>();
 			
-			if(bwd_result == null || bwd_result.equals("NULL")){ //if focal patent's "references cited" is null
+			if(bwd_result == null || bwd_result.equals("NULL")){
+				//if focal patent's "references cited" is null, it means doesn't cite other patents or missing data
 				OriginalityIndexIPC = 0;
 				OriginalityIndexUSPC = 0;
-				System.out.println("This Patent"+PatentID+"didn't cite other patent");
-			}
-			else if(focal_year == OLDEST_YEAR){
-				bwd_patent = bwd_result.split(";");
-				NumberOfBwd = bwd_patent.length;
-				System.out.println("Sorry! Database only implement patents from 1976~2009....");
 			}
 			else{
 				bwd_patent = bwd_result.split(";");
 				NumberOfBwd = bwd_patent.length;
-				//System.out.println("Number of BWD "+NumberOfBwd);
-				
-				for (int i=0; i < NumberOfBwd; i++) { //for all bwd-citation patents, find its' IPC and USPC, calculate Originality Index 
-					//System.out.println("Search bwd patent "+bwd_patent[i]+".....");
-					int flag = 0;
-					int flag2 = 0;
-					for (int year = OLDEST_YEAR; year <= focal_year; year++) {	
-							String bwd_IPC = GetMainIPClass(year, bwd_patent[i]);
-							String bwd_USPC = GetMainUSPClass(year, bwd_patent[i]);
-							
-							//build Hashmap for counting the number of different class that bwdcitations have cited
-							if(!bwd_IPC.equals("NULL") && bwd_IPC != null ){
-								if(IPCMap.containsKey(bwd_IPC)){
-									int value = IPCMap.get(bwd_IPC);
-									value++;
-									IPCMap.put(bwd_IPC, value);
+				if(focal_year == OLDEST_YEAR){//system have no reference information before 1976
+					OriginalityIndexUSPC =-1;
+					OriginalityIndexIPC  =-1;
+				}
+				else{
+					for (int i=0; i < NumberOfBwd; i++) { 
+						//for all bwd_citation patents, find its' IPC and USPC, calculate Originality Index 
+						int flag = 0;
+						int flag2 = 0;
+						for (int year = OLDEST_YEAR; year <= focal_year; year++) {	
+								String bwd_IPC = GetMainIPClass(year, bwd_patent[i]);
+								String bwd_USPC = GetMainUSPClass(year, bwd_patent[i]);
+								
+								//build Hashmap for counting the number of different class that bwd_citations have cited
+								if(!bwd_IPC.equals("NULL") && bwd_IPC != null ){
+									if(IPCMap.containsKey(bwd_IPC)){
+										int value = IPCMap.get(bwd_IPC);
+										value++;
+										IPCMap.put(bwd_IPC, value);
+									}
+									else{
+										IPCMap.put(bwd_IPC, 1);
+									}
+									flag = 1;
 								}
-								else{
-									IPCMap.put(bwd_IPC, 1);
+								
+								if(!bwd_USPC.equals("NULL") && bwd_USPC != null){
+									if(USPCMap.containsKey(bwd_USPC)){
+										int value = USPCMap.get(bwd_USPC);
+										value++;
+										USPCMap.put(bwd_USPC, value);
+									}
+									else{
+										USPCMap.put(bwd_USPC, 1);
+									}
+									flag2 = 1;
 								}
-								flag = 1;
-								//System.out.println(bwd_patent[i]+"'s IP Class is "+bwd_IPC);
-							}
-							
-							if(!bwd_USPC.equals("NULL") && bwd_USPC != null){
-								if(USPCMap.containsKey(bwd_USPC)){
-									int value = USPCMap.get(bwd_USPC);
-									value++;
-									USPCMap.put(bwd_USPC, value);
+								
+								if(flag*flag2!=0){// if both class had been found.
+									break;
 								}
-								else{
-									USPCMap.put(bwd_USPC, 1);
-								}
-								flag2 = 1;
-								//sSystem.out.println(bwd_patent[i]+"'s USPC Class is "+bwd_USPC);
-							}
-							
-							if(flag*flag2!=0){// if both class had been found.
-								break;
-							}
+						}//end for
+						if(flag*flag2 == 0){
+							//System.out.println("This Patent "+bwd_patent[i]+" is not in the database");
+						}
+						
 					}//end for
-					if(flag*flag2 == 0){
-						//System.out.println("This Patent "+bwd_patent[i]+" is not in the database");
-					}
 					
-				}//end for
-				
-				
-				if(!IPCMap.isEmpty()){
-					//System.out.println("HERE");
-					Collection<Integer> collectIPC = IPCMap.values();
-					Iterator<Integer> iteIPC = collectIPC.iterator();
-					while(iteIPC.hasNext()){
-						CountIPC_Origin(iteIPC.next());
-						//System.out.println("THIS "+iteIPC.next());
-					}
-					OriginalityIndexIPC = 1-CumulateIndexIPC;
-					CumulateIndexIPC =0;
-				}
-				if(!USPCMap.isEmpty()){	
-					Collection<Integer> collectUSPC = USPCMap.values();
-					Iterator<Integer> iteUSPC = collectUSPC.iterator();
 					
-					while(iteUSPC.hasNext()){
-						CountUSPC_Origin(iteUSPC.next());
-						//System.out.println("AND"+ iteUSPC.next());
+					if(!IPCMap.isEmpty()){
+						Collection<Integer> collectIPC = IPCMap.values();
+						Iterator<Integer> iteIPC = collectIPC.iterator();
+						while(iteIPC.hasNext()){
+							CountIPC_Origin(iteIPC.next());
+						}
+						OriginalityIndexIPC = 1-CumulateIndexIPC;
+						CumulateIndexIPC =0;
 					}
-					OriginalityIndexUSPC = 1- CumulateIndexUSPC;
-					CumulateIndexUSPC =0;
-				}
-				
+					if(!USPCMap.isEmpty()){	
+						Collection<Integer> collectUSPC = USPCMap.values();
+						Iterator<Integer> iteUSPC = collectUSPC.iterator();
+						
+						while(iteUSPC.hasNext()){
+							CountUSPC_Origin(iteUSPC.next());
+						}
+						OriginalityIndexUSPC = 1- CumulateIndexUSPC;
+						CumulateIndexUSPC =0;
+					}
+				}//end else
 			}//end else
 		}
 		else{
 			OriginalityIndexUSPC =-1;
 			OriginalityIndexIPC  =-1;
-		}
-		
-		
-		
+		}	
 	}//end OriginIndex
+	/*
+	 * Update variables to database
+	 */
 	public void DBUpdate()throws SQLException{
 
 		Open2();
@@ -290,13 +287,11 @@ public class Originality {
 		Close();
 		Close2();
 	}
-	
-	
-	
+
 	public static void main(String[] args) throws SQLException {
 		//String patentID = "4490855";
-		Originality origin = new Originality();
-		origin.DBUpdate();
+		/*Originality origin = new Originality();
+		origin.DBUpdate();*/
 	}//end main
 
 }//end BwdSelfCiation

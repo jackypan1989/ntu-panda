@@ -8,7 +8,18 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
-
+/*
+ * Author: kobuta
+ * Number of variables : 5
+ * 1.NumOfClaim = number of claim
+ * 2.NumOfIndepClaim = number of independent claim
+ * 3.NumOfDepClaim = number of dependent claim
+ * 4.AveLength_IndepClaim = average length of independent claim
+ * 5.LengthOfDescription = length of description
+ * 
+ * No.1~4 use ExtractClaims(PatentID).
+ * No.5 use ExtractClaims(PatentID) and Count_Description();
+ */
 public class claims {
 	static final String DRIVER = "com.mysql.jdbc.Driver";
 	static final String DATABASE_URL = "jdbc:mysql://140.112.107.207/mypaper";   //which database
@@ -37,6 +48,9 @@ public class claims {
 	private float AveLength_IndepClaim= 0;
 	private int Length_IndepClaim = 0;
 
+	/*
+	 * connect to database
+	 */
 	public void Open(){
 		try {
 			Class.forName( DRIVER );
@@ -100,6 +114,9 @@ public class claims {
 		    }
 	 }
 
+	/*
+	 * select data from database
+	 */
 	public void GetTable(String pid){//search table content_1976-2009
 		int year;
 		for(year = OLDEST_YEAR ; year <= YOUNGEST_YEAR ; year++)
@@ -121,6 +138,9 @@ public class claims {
 		}
 		
 	}
+	/*
+	 * main part of this program
+	 */
 	public void Count_Description() throws SQLException{
 		if( resultSet.absolute(1) != false){
 			result_description = resultSet.getString("Description");
@@ -144,7 +164,6 @@ public class claims {
 		}
 		NumOfDepClaim = counter;
 	}
-
 	public void ExtractClaims( String PatentID) throws SQLException{
 		
 		GetTable(PatentID);
@@ -178,11 +197,12 @@ public class claims {
 			NumOfIndepClaim = -1;
 			NumOfDepClaim = -1;
 			AveLength_IndepClaim = -1;
-		}
-		
-		
+		}	
 	
 	}
+	/*
+	 * Update variables to database
+	 */
 	public void DBUpdate()throws SQLException{
 		Open();
 		Open2();
@@ -213,9 +233,9 @@ public class claims {
 	}
 	public static void main(String[] args) throws SQLException {
 		//String patentID = "RE29093";
-		claims cl = new claims();
+		/*claims cl = new claims();
 		cl.DBUpdate();
-		/*cl.Open();
+		cl.Open();
 		cl.Open2();
 		cl.ExtractClaims("D403674");
 		cl.Close();

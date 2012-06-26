@@ -7,7 +7,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.text.*;
-
+/*
+ * Author: kobuta
+ * Number of variables: 3
+ * 1.PatentAgeIsseued = Patent_age_since_issued_data(data collection date - issued date)
+ * 2.AppTime = approval time(issued date - applied date)
+ * 3.NumOfInventors = number of inventors
+ * No.1 use CountPatentAge(PatentID)
+ * No.2 & 3 use ParseInventors(PatentID)
+ */
 
 
 public class PatentAge {
@@ -37,18 +45,11 @@ public class PatentAge {
 	private String[] inventors;
 	private int NumOfInventors;
 	private int AppTime;
-	private int PatentDay =0;
+	private int PatentAgeIsseued =0;
 	
-	
-	public int GetPatentAgeSinceIssuedDate(){
-		return PatentDay;
-	}
-	public int GetApprovalTime(){
-		return AppTime;
-	}
-	public int GetNumOfInventors(){
-		return NumOfInventors;
-	}
+	/*
+	 * connect to database
+	 */
 	public void Open(){
 		try {
 			Class.forName( DRIVER );
@@ -111,7 +112,9 @@ public class PatentAge {
 		      System.out.println("Close Exception :" + e.toString());
 		    }
 	 }
-
+	/*
+	 * select data from database
+	 */
 	public void GetTable(String pid) throws SQLException{
 		int year;
 		for(year = OLDEST_YEAR ; year <= YOUNGEST_YEAR ; year++)
@@ -123,37 +126,7 @@ public class PatentAge {
 			    break;	    	
 		}
 	}
-	public void countPatentAge(String PatentID) throws ParseException, SQLException{
-		GetTable(PatentID);
-		if(resultSet.absolute(1) !=  false){
-			 issued_date = resultSet.getString("Issued_Date");
-			 issued_date = issued_date.replace("  ","");
-			 issued_year = resultSet.getString("Issued_Year");
-			 issued = issued_date + ", " + issued_year;
-			 System.out.println(issued);
-			 
-			 DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, Locale.ENGLISH);
-
-			 Date d1 = df.parse(issued); 
-			 Date d2 = df.parse(DATACOLLECT_DATE);
-			 long t1 = d2.getTime() - d1.getTime();
-			 long time = 1000*3600*24;
-					
-			 if(t1/time > 0){
-				 PatentDay = (int) (t1/time);
-			 }
-			 else{
-				 System.out.println("Unable to caculate... "); 
-			 }	
-		}
-		else{
-			PatentDay = -1;
-		}
-		
-	
-	}
-	//Num of Inventors + Approval time 
-	public void GetTable2(String pid) throws SQLException{
+	public void GetTable2(String pid) throws SQLException{//for counting NumOfInvnetors and AppTime 
 		int year;
 		for(year = OLDEST_YEAR ; year <= YOUNGEST_YEAR; year++)
 		{
@@ -164,6 +137,36 @@ public class PatentAge {
 			    break;	    	
 		}
 	}
+	/*
+	 * main part of this program
+	 */
+	public void CountPatentAge(String PatentID) throws ParseException, SQLException{
+		
+		GetTable(PatentID);
+		if(resultSet.absolute(1) !=  false){
+			 issued_date = resultSet.getString("Issued_Date");
+			 issued_date = issued_date.replace("  ","");
+			 issued_year = resultSet.getString("Issued_Year");
+			 issued = issued_date + ", " + issued_year;
+			 
+			 DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, Locale.ENGLISH);
+
+			 Date d1 = df.parse(issued); 
+			 Date d2 = df.parse(DATACOLLECT_DATE);
+			 long t1 = d2.getTime() - d1.getTime();
+			 long time = 1000*3600*24;
+					
+			 if(t1/time > 0){
+				 PatentAgeIsseued = (int) (t1/time);
+			 }
+			 else{
+				 System.out.println("Unable to caculate... "); 
+			 }	
+		}
+		else{
+			PatentAgeIsseued = -1;
+		}
+	}	
 	public void countApprovalTime() throws ParseException{
 		 DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, Locale.ENGLISH);
 		 Date d1 = df.parse(applied_date); 
@@ -178,14 +181,14 @@ public class PatentAge {
 			 System.out.println("Unable to caculate... "); 
 		 }	
 	}
-	public void parseInventors(String PatentID) throws SQLException, ParseException{
+	public void ParseInventors(String PatentID) throws SQLException, ParseException{
+		
 		GetTable2(PatentID);
 		if(resultSet_inventors.absolute(1) != false){
 			String result_all = resultSet_inventors.getString("Inventors");
 			String[] s = result_all.split("Filed:  ");
 			if(s.length != 1){
 				applied_date = s[1].replace("                        ","");
-				//System.out.println("DDD"+applied_date);
 				countApprovalTime();
 				s = s[0].split("Assignee:  ");
 				inventors = s[0].split(";");
@@ -194,15 +197,15 @@ public class PatentAge {
 			else{
 				AppTime = -1;
 			}
-			
-			//System.out.println(NumOfInventors);
-			//System.out.println(AppTime);
 		}//end if
 		else{
 			AppTime = -1;
 			NumOfInventors = -1;
 		}
 	}
+	/*
+	 * Update variables to database
+	 */
 	public void DBUpdate()throws SQLException, ParseException {
 
 		Open2();
@@ -221,11 +224,11 @@ public class PatentAge {
 		while(pItr.hasNext()){
 			String patentID = pItr.next();
 			System.out.println("For patent "+patentID +": ");		
-			countPatentAge(patentID);
-			parseInventors(patentID);
-			//System.out.println(PatentDay);
+			CountPatentAge(patentID);
+			ParseInventors(patentID);
+			//System.out.println(PatentAgeIsseued);
 			statement2.executeUpdate("UPDATE licensability_negative SET num_of_inventors = '" + NumOfInventors + "' , approval_time = '"+ AppTime +"' WHERE Patent_id = '"+patentID+"'");
-			//statement2.executeUpdate("UPDATE attacker_expert SET approval_time = '"+ AppTime +"',patent_age_since_issued_date = '" + PatentDay + "' WHERE Patent_id = '"+patentID+"'");
+			//statement2.executeUpdate("UPDATE attacker_expert SET approval_time = '"+ AppTime +"',patent_age_since_issued_date = '" + PatentAgeIsseued + "' WHERE Patent_id = '"+patentID+"'");
 		}
 				
 		System.out.println("Program End");
@@ -234,12 +237,12 @@ public class PatentAge {
 	}
 	
 	public static void main(String[] args) throws ParseException, SQLException {
-		PatentAge pa = new PatentAge();
+		/*PatentAge pa = new PatentAge();
 		pa.DBUpdate();
-		/*pa.Open();
+		pa.Open();
 		pa.Open2();
-		pa.countPatentAge("RE29501");
-		pa.parseInventors("RE29501");
+		pa.CountPatentAge("RE29501");
+		pa.ParseInventors("RE29501");
 		pa.Close();
 		pa.Close2();*/
 	}//end main
