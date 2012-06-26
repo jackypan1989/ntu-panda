@@ -3,12 +3,18 @@ package ntu.im.bilab.panda.jacky;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import ntu.im.bilab.panda.parameter.ApplicabilityIntegrity;
 import ntu.im.bilab.panda.parameter.Diversity;
 import ntu.im.bilab.panda.parameter.Innovation;
 import ntu.im.bilab.panda.parameter.Profile;
+
+/* 
+ * this class is used for patent entity, and reflect the data and parameters
+ * Author : r00 jackypan1989@gmail.com 
+ */
 
 public class Patent {
 	// patent id and year from USPTO
@@ -59,11 +65,17 @@ public class Patent {
 	// constructor
 	public Patent(String patent_id) {
 		id = patent_id;
+		fetchDataFromDb(id);
+		setInfo();
+		setParams();
+	}
+	
+	public void fetchDataFromDb(String patent_id) {
 		DataBaseFetcher dbf = new DataBaseFetcher();
 		dbf.getPatentData(this, patent_id);
 		dbf.Close();
 	}
-
+	
 	public void setInfo(Map<String, String> info) {
 		this.info = info;
 	}
@@ -101,7 +113,8 @@ public class Patent {
 		Profile prof = new Profile(patent_id);
 		Diversity div = new Diversity(patent_id);
 		ApplicabilityIntegrity AI = new ApplicabilityIntegrity(patent_id);
-        // put parameters to params map		
+        
+		// put r99's parameters to params map		
 		params.put("inventors",""+prof.GetInventors());
 		params.put("diversity_USPC",""+div.GetTechScope());
 		params.put("num_of_claims",""+AI.NoClaims());
@@ -111,11 +124,28 @@ public class Patent {
 		params.put("science_linkage",""+inno.ScienceLinks());
 		params.put("originality_USPC",""+div.GetOriginality());
 		params.put("generality_USPC","-1");
+		params.put("extensive_generality","-1");
 		params.put("num_of_assignee_transfer",""+AI.NoTransAs());
 		params.put("num_of_patent_group",""+inno.PatentGroups());
 		params.put("approval_time",""+prof.GetApproveTime());
 		params.put("num_of_assignee",""+prof.GetAssignee());
 		params.put("num_of_citing_USpatent",""+prof.GetCitation());
+		
+		// get parameter from r00 jacky and put into map
+		ParameterFinder pf = new ParameterFinder(patent_id);
+		try {
+			params.put("inventors",""+pf.getInventors(old_data.getString("Inventors")));
+			params.put("foreign_inventors",""+pf.getForeignInventors(old_data.getString("Inventors")));
+			params.put("foreign_classes",""+pf.getForeignClasses(old_data.getString("References Cited")));
+			params.put("family_size",""+pf.getPatentFamilySize(patent_id));
+			params.put("patented_bwd_citations",""+pf.getPatentedBackwardCitations(patent_id));
+			params.put("major_market",""+pf.getMajorMarket(patent_id));
+			params.put("foreign_priority_Apps",""+pf.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
+			params.put("years_receive_first_citations",""+pf.getYearsToReceiveTheFirstCitation(this));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public Map<String, String> getParams() {
@@ -377,8 +407,17 @@ public class Patent {
 	public static void main(String[] args)
 	{
 		Patent p = new Patent("5110638");
-		p.setInfo();
 		HashMap<String,String> m = (HashMap<String, String>) p.getInfo();
-		System.out.println(m.get("abstract"));
+		HashMap<String,String> s = (HashMap<String, String>) p.getParams();
+		
+		Iterator<String> iterator = s.keySet().iterator();  
+		   
+		while (iterator.hasNext()) {  
+		   String key = iterator.next().toString();  
+		   String value = s.get(key).toString();  
+		   
+		   System.out.println(key + " " + value);  
+		}  
+		
 	}
 }

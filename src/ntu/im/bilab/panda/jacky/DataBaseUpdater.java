@@ -10,154 +10,233 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import ntu.im.bilab.panda.core.Config;
 
-public class DataBaseUpdater extends DataBaseUtility{
+public class DataBaseUpdater extends DataBaseUtility {
 	public Connection conn;
-    public Statement stmt;
-	
-	public DataBaseUpdater(){
-		try { 
-	        Class.forName(Config.DRIVER); 
-	        conn = DriverManager.getConnection(Config.DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
-	        stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  
-                    ResultSet.CONCUR_UPDATABLE);   
-	    } 
-	    catch(ClassNotFoundException e) { 
-	        System.out.println("Can't find driver class"); 
-	        e.printStackTrace(); 
-	    } catch (SQLException e) {
+	public Statement stmt;
+
+	public DataBaseUpdater() {
+		try {
+			Class.forName(Config.DRIVER);
+			conn = DriverManager.getConnection(Config.DATABASE_URL,
+					Config.DATABASE_USER, Config.DATABASE_PASSWORD);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+		} catch (ClassNotFoundException e) {
+			System.out.println("Can't find driver class");
+			e.printStackTrace();
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 	}
-	
-	public void updateParameter(int thread_id){
+
+	/*
+	public void old_updateParameter(int thread_id) {
 		// 4080180 , 136007
 		// v_p 75
 		// v_n 118
 		int update_count = 0;
-			try {
-	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive");
-	    		//ResultSet result = stmt.executeQuery("SELECT * FROM value_positive ORDER BY `value_positive`.`DB_Status` ASC ");
-	    		//System.out.println(result.getRow());
-	    		while(result.next()){
-	    			if(result.getString("DB_Status").equals("A-1")) continue;
-	    			String patent_id = result.getString("Patent_id");
-	    			Patent patent = new Patent(patent_id);
-	    			//System.out.println(patent_id);
-	    			
-	    			ParameterFinder t = new ParameterFinder();
-	    			//ResultSet new_data = patent.getNew_data();
-	    			ResultSet old_data = patent.getOld_data();
-	                
-	    			t.getEC(patent_id);
-	    			System.out.println(old_data.getString("Inventors"));
-	    			patent.setParameter_inventors(t.getInventors(old_data.getString("Inventors")));
-	    			patent.setParameter_foreign_inventors(t.getForeignInventors(old_data.getString("Inventors")));
-	    			patent.setParameter_foreign_classes(t.getForeignClasses(old_data.getString("References Cited")));
-	    			patent.setParameter_patent_family_size(t.getPatentFamilySize(patent_id));
-	    			patent.setParameter_patented_backward_citations(t.getPatentedBackwardCitations(patent_id));
-	    			patent.setParameter_major_market(t.getMajorMarket(patent_id));
-	    			patent.setParameter_foreign_priority_apps(t.getForeignPriorityApps(old_data.getString("Current U.S. Class")));
-	    			patent.setParameter_years_to_receive_the_first_citation(t.getYearsToReceiveTheFirstCitation(patent));
-	    			//System.out.println(patent.toString());
-	    			
-	    			result.updateString("DB_Status", "A-1"); 
-	    			result.updateInt("inventors", patent.getParameter_inventors()); 
-	    			result.updateInt("foreign_inventors", patent.getParameter_foreign_inventors()); 
-	    			result.updateInt("foreign_classes", patent.getParameter_foreign_classes()); 
-	    			result.updateInt("family_size", patent.getParameter_patent_family_size()); 
-	    			result.updateInt("patented_bwd_citations", patent.getParameter_patented_backward_citations()); 
-	    			result.updateInt("major_market", patent.getParameter_major_market()); 
-	    			result.updateInt("foreign_priority_Apps", patent.getParameter_foreign_priority_apps()); 
-	    			result.updateInt("years_receive_first_citations", patent.getParameter_years_to_receive_the_first_citation()); 
-	    			
-	    			patent.getOldParameter();
-	    			
-	    			result.updateInt("diversity_USPC",patent.getParameter_diversity_USPC());
-	    			result.updateInt("num_of_claims",patent.getParameter_num_of_claims());
-	    			result.updateInt("num_of_indep_claims",patent.getParameter_num_of_indep_claims());
-	    			result.updateInt("num_of_dep_claims",patent.getParameter_num_of_dep_claims());
-	    			result.updateInt("num_of_bwd_citations",patent.getParameter_num_of_bwd_citations());
-	    			result.updateInt("science_linkage",patent.getParameter_science_linkage());
-	    			result.updateInt("originality_USPC",patent.getParameter_originality_USPC());
-	    			result.updateInt("generality_USPC",patent.getParameter_generality_USPC());
-	    			result.updateInt("extensive_generality",0);
-	    			result.updateInt("num_of_assignee_transfer",patent.getParameter_num_of_assignee_transfer());
-	    			result.updateInt("num_of_patent_group",patent.getParameter_num_of_patent_group());
-	    			result.updateInt("approval_time",(int)patent.getParameter_approval_time());
-	    			result.updateInt("num_of_assignee",patent.getParameter_num_of_assignee());
-	    			result.updateInt("num_of_citing_USpatent",patent.getParameter_num_of_citing_USpatent());
-	    		    
-	    			result.updateRow(); 
-	    			update_count++;
-	    			System.out.println("thread_id : "+thread_id);
-	    			System.out.println("this thread progress : "+ update_count);
-	    			System.out.println(patent_id+" update successed!\n");
-	    			
-	    		}
-	    	} catch (SQLException e) {
-	    		// TODO Auto-generated catch block
-	    		e.printStackTrace();
-	    	}
-			//System.out.println("complete " + i +" / 136006\n");
-		
+		try {
+			ResultSet result = stmt
+					.executeQuery("SELECT * FROM value_positive");
+			// ResultSet result =
+			// stmt.executeQuery("SELECT * FROM value_positive ORDER BY `value_positive`.`DB_Status` ASC ");
+			// System.out.println(result.getRow());
+			while (result.next()) {
+				if (result.getString("DB_Status").equals("A-1"))
+					continue;
+				String patent_id = result.getString("Patent_id");
+				Patent patent = new Patent(patent_id);
+				// System.out.println(patent_id);
+
+				//ParameterFinder t = new ParameterFinder();
+				// ResultSet new_data = patent.getNew_data();
+				ResultSet old_data = patent.getOld_data();
+
+				t.getEC(patent_id);
+				System.out.println(old_data.getString("Inventors"));
+				patent.setParameter_inventors(t.getInventors(old_data
+						.getString("Inventors")));
+				patent.setParameter_foreign_inventors(t
+						.getForeignInventors(old_data.getString("Inventors")));
+				patent.setParameter_foreign_classes(t
+						.getForeignClasses(old_data
+								.getString("References Cited")));
+				patent.setParameter_patent_family_size(t
+						.getPatentFamilySize(patent_id));
+				patent.setParameter_patented_backward_citations(t
+						.getPatentedBackwardCitations(patent_id));
+				patent.setParameter_major_market(t.getMajorMarket(patent_id));
+				patent.setParameter_foreign_priority_apps(t
+						.getForeignPriorityApps(old_data
+								.getString("Current U.S. Class")));
+				patent.setParameter_years_to_receive_the_first_citation(t
+						.getYearsToReceiveTheFirstCitation(patent));
+				// System.out.println(patent.toString());
+
+				result.updateString("DB_Status", "A-1");
+				result.updateInt("inventors", patent.getParameter_inventors());
+				result.updateInt("foreign_inventors",
+						patent.getParameter_foreign_inventors());
+				result.updateInt("foreign_classes",
+						patent.getParameter_foreign_classes());
+				result.updateInt("family_size",
+						patent.getParameter_patent_family_size());
+				result.updateInt("patented_bwd_citations",
+						patent.getParameter_patented_backward_citations());
+				result.updateInt("major_market",
+						patent.getParameter_major_market());
+				result.updateInt("foreign_priority_Apps",
+						patent.getParameter_foreign_priority_apps());
+				result.updateInt("years_receive_first_citations", patent
+						.getParameter_years_to_receive_the_first_citation());
+
+				patent.getOldParameter();
+
+				result.updateInt("diversity_USPC",
+						patent.getParameter_diversity_USPC());
+				result.updateInt("num_of_claims",
+						patent.getParameter_num_of_claims());
+				result.updateInt("num_of_indep_claims",
+						patent.getParameter_num_of_indep_claims());
+				result.updateInt("num_of_dep_claims",
+						patent.getParameter_num_of_dep_claims());
+				result.updateInt("num_of_bwd_citations",
+						patent.getParameter_num_of_bwd_citations());
+				result.updateInt("science_linkage",
+						patent.getParameter_science_linkage());
+				result.updateInt("originality_USPC",
+						patent.getParameter_originality_USPC());
+				result.updateInt("generality_USPC",
+						patent.getParameter_generality_USPC());
+				result.updateInt("extensive_generality", 0);
+				result.updateInt("num_of_assignee_transfer",
+						patent.getParameter_num_of_assignee_transfer());
+				result.updateInt("num_of_patent_group",
+						patent.getParameter_num_of_patent_group());
+				result.updateInt("approval_time",
+						(int) patent.getParameter_approval_time());
+				result.updateInt("num_of_assignee",
+						patent.getParameter_num_of_assignee());
+				result.updateInt("num_of_citing_USpatent",
+						patent.getParameter_num_of_citing_USpatent());
+
+				result.updateRow();
+				update_count++;
+				System.out.println("thread_id : " + thread_id);
+				System.out.println("this thread progress : " + update_count);
+				System.out.println(patent_id + " update successed!\n");
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// System.out.println("complete " + i +" / 136006\n");
+
+	}*/
+
+	public void updateParams(String table_name, int thread_id) {
+		int update_count = 0;
+		try {
+			ResultSet result = stmt.executeQuery("SELECT * FROM " + table_name);
+			while (result.next()) {
+				if (result.getString("DB_Status").equals("A-1"))
+					continue;
+				String patent_id = result.getString("Patent_id");
+				Patent patent = new Patent(patent_id);
+				
+				Map<String, String> info = patent.getInfo();
+				Map<String, String> params = patent.getParams();
+				
+				Iterator<String> iterator = params.keySet().iterator();  
+				   
+				result.updateString("DB_Status", "A-1");
+				while (iterator.hasNext()) {  
+				   String key = iterator.next().toString();  
+				   String value = params.get(key).toString();  
+				   
+				   System.out.println(key + " " + value); 
+				   result.updateInt(key, Integer.parseInt(value));
+				}
+				
+				result.updateRow();
+				update_count++;
+				System.out.println("thread_id : " + thread_id);
+				System.out.println("this thread progress : " + update_count);
+				System.out.println(patent_id + " update successed!\n");
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// System.out.println("complete " + i +" / 136006\n");
+
 	}
-	
-	public void updateTrainingData(){
+
+	public void updateTrainingData() {
 		ArrayList<String> patent_list = new ArrayList<String>();
 		BufferedReader bufferedReader = null;
 		try {
-			bufferedReader = new BufferedReader(new FileReader("unworthy_patents.txt"));
-            
-            String line = null;
-            while ((line = bufferedReader.readLine()) != null) 
-            	patent_list.add(line.trim());           	
-            
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            //Close the BufferedReader
-            try {
-                if (bufferedReader != null)
-                    bufferedReader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+			bufferedReader = new BufferedReader(new FileReader(
+					"unworthy_patents.txt"));
+
+			String line = null;
+			while ((line = bufferedReader.readLine()) != null)
+				patent_list.add(line.trim());
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// Close the BufferedReader
+			try {
+				if (bufferedReader != null)
+					bufferedReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		System.out.println(patent_list);
-		
-		for(String patent_id : patent_list) {
+
+		for (String patent_id : patent_list) {
 			Patent patent = new Patent(patent_id);
 			System.out.println(patent_id);
 			try {
-				stmt.executeUpdate("INSERT INTO  `patent_value`.`value_negative` " +
-						"(`Patent_id` ,`DB_Status` ,`Patent_year` ,`inventors` ,`foreign_inventors` ," +
-						"`diversity_USPC` ,`foreign_classes` ,`family_size` ,`major_market` ,`num_of_claims` ," +
-						"`num_of_indep_claims` ,`num_of_dep_claims` ,`patented_bwd_citations` ,	`num_of_bwd_citations` ," +
-						"`science_linkage` ,`originality_USPC` ,`generality_USPC` ,	`extensive_generality` ," +
-						"`num_of_assignee_transfer` ,`num_of_patent_group` ,`foreign_priority_Apps` ," +
-						"`years_receive_first_citations` ,`approval_time` ,	`num_of_assignee` ,	`num_of_citing_USpatent`)" +
-						" VALUES ('"+patent.getId()+"',  '',  '"+patent.getYear()+"',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0'" +
-						",  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0')");
-				System.out.println(patent_id+" has been inserted");
+				stmt.executeUpdate("INSERT INTO  `patent_value`.`value_negative` "
+						+ "(`Patent_id` ,`DB_Status` ,`Patent_year` ,`inventors` ,`foreign_inventors` ,"
+						+ "`diversity_USPC` ,`foreign_classes` ,`family_size` ,`major_market` ,`num_of_claims` ,"
+						+ "`num_of_indep_claims` ,`num_of_dep_claims` ,`patented_bwd_citations` ,	`num_of_bwd_citations` ,"
+						+ "`science_linkage` ,`originality_USPC` ,`generality_USPC` ,	`extensive_generality` ,"
+						+ "`num_of_assignee_transfer` ,`num_of_patent_group` ,`foreign_priority_Apps` ,"
+						+ "`years_receive_first_citations` ,`approval_time` ,	`num_of_assignee` ,	`num_of_citing_USpatent`)"
+						+ " VALUES ('"
+						+ patent.getId()
+						+ "',  '',  '"
+						+ patent.getYear()
+						+ "',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0'"
+						+ ",  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0',  '0')");
+				System.out.println(patent_id + " has been inserted");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
-	
-	public static void main(String[] args)
-	{
+
+	public static void main(String[] args) {
 		DataBaseUpdater dbu = new DataBaseUpdater();
-		dbu.updateParameter(1);
-		//dbu.updateTrainingData();
+		dbu.updateParams("value_positive", 1);
+		// dbu.updateTrainingData();
 		dbu.Close();
 	}
 }
