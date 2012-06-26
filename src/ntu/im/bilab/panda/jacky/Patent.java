@@ -11,21 +11,23 @@ import ntu.im.bilab.panda.parameter.Innovation;
 import ntu.im.bilab.panda.parameter.Profile;
 
 public class Patent {
-	// data from database "mypaper"
-	private ResultSet new_data;
-	// data from database "patent_value"
-	private ResultSet old_data;
-	// info map for this patent
-	// include id, 
-	private Map<String, String> info = new HashMap<String, String>();
-
-	
-
-	// baseline
+	// patent id and year from USPTO
 	private String id;
 	private String year;
-
-	// 8 parameter (Jacky)
+	
+	// database content from database "140.112.107.207/mypaper"
+	private ResultSet new_data;
+	
+	// database content from database "140.112.107.207/patent_value"
+	private ResultSet old_data;
+	
+	/* info is a basic information map for this patent
+	 * id, date, inventors, assignees, abstract, claims, description, summary, title
+	 */
+	private Map<String, String> info = new HashMap<String, String>();
+	private Map<String, String> params = new HashMap<String, String>();
+	
+	// 8 parameters from r00(jackypan1989)
 	private int parameter_inventors;
 	private int parameter_foreign_inventors;
 	private int parameter_foreign_classes;
@@ -35,10 +37,10 @@ public class Patent {
 	private int parameter_foreign_priority_apps;
 	private int parameter_years_to_receive_the_first_citation;
 
-	// 1 parameter (Ivy)
+	// 1 parameter from r00(Ivy)
 	private int parameter_patent_family_volume;
 
-	// 14 old parameter (Lab)
+	// 14 old parameters from r99 lab
 	private int parameter_diversity_USPC;
 	private int parameter_num_of_claims;
 	private int parameter_num_of_indep_claims;
@@ -56,13 +58,16 @@ public class Patent {
 
 	// constructor
 	public Patent(String patent_id) {
-		// TODO Auto-generated constructor stub
 		id = patent_id;
 		DataBaseFetcher dbf = new DataBaseFetcher();
 		dbf.getPatentData(this, patent_id);
 		dbf.Close();
 	}
 
+	public void setInfo(Map<String, String> info) {
+		this.info = info;
+	}
+	
 	public void setInfo() {
 		try {
 			info.put("id", new_data.getString("Patent_id"));
@@ -80,7 +85,43 @@ public class Patent {
 			e.printStackTrace();
 		}
 	}
+	
+	public Map<String, String> getInfo() {
+		return info;
+	}
 
+	public void setParams(Map<String, String> params) {
+		this.params = params;
+	}
+
+	public void setParams() {
+		// get parameters from r99 lab
+		String patent_id = this.getId();
+		Innovation inno = new Innovation(patent_id);
+		Profile prof = new Profile(patent_id);
+		Diversity div = new Diversity(patent_id);
+		ApplicabilityIntegrity AI = new ApplicabilityIntegrity(patent_id);
+        // put parameters to params map		
+		params.put("inventors",""+prof.GetInventors());
+		params.put("diversity_USPC",""+div.GetTechScope());
+		params.put("num_of_claims",""+AI.NoClaims());
+		params.put("num_of_indep_claims",""+AI.NoIndepClaim());
+		params.put("num_of_dep_claims",""+AI.NoDepClaim());
+		params.put("num_of_bwd_citations",""+inno.BackwardCitations());
+		params.put("science_linkage",""+inno.ScienceLinks());
+		params.put("originality_USPC",""+div.GetOriginality());
+		params.put("generality_USPC","-1");
+		params.put("num_of_assignee_transfer",""+AI.NoTransAs());
+		params.put("num_of_patent_group",""+inno.PatentGroups());
+		params.put("approval_time",""+prof.GetApproveTime());
+		params.put("num_of_assignee",""+prof.GetAssignee());
+		params.put("num_of_citing_USpatent",""+prof.GetCitation());
+	}
+	
+	public Map<String, String> getParams() {
+		return params;
+	}
+	
 	public void getOldParameter() {
 		String patent_id = this.getId();
 		Innovation inno = new Innovation(patent_id);
@@ -103,28 +144,6 @@ public class Patent {
 		parameter_approval_time = prof.GetApproveTime();
 		parameter_num_of_assignee = prof.GetAssignee();
 		parameter_num_of_citing_USpatent = prof.GetCitation();
-	}
-
-	public String toString() {
-		String attributes = "";
-		attributes = attributes + "foreign_inventors : "
-				+ parameter_foreign_inventors + "\n";
-		attributes = attributes + "foreign_classes : "
-				+ parameter_foreign_classes + "\n";
-		attributes = attributes + "patent_family_size : "
-				+ parameter_patent_family_size + "\n";
-		attributes = attributes + "patented_backward_citations : "
-				+ parameter_patented_backward_citations + "\n";
-		attributes = attributes + "major_market : " + parameter_major_market
-				+ "\n";
-		attributes = attributes + "foreign_priority_apps : "
-				+ parameter_foreign_priority_apps + "\n";
-		attributes = attributes + "years_to_receive_the_first_citation : "
-				+ parameter_years_to_receive_the_first_citation + "\n";
-		attributes = attributes + "patent_family_volume : "
-				+ parameter_patent_family_volume + "\n"; // ivy
-
-		return attributes;
 	}
 
 	public ResultSet getNew_data() {
@@ -350,13 +369,6 @@ public class Patent {
 		this.parameter_patent_family_volume = parameter_patent_family_volume;
 	}
 	
-	public Map<String, String> getInfo() {
-		return info;
-	}
-
-	public void setInfo(Map<String, String> info) {
-		this.info = info;
-	}
 
 	public int getParameter_patent_family_volume() {
 		return parameter_patent_family_volume;
