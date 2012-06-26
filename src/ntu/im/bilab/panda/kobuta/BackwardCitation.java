@@ -8,6 +8,13 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
+/*
+ * Author: kobuta
+ * Number of variables: 2
+ * 1.BwdSelfCitationRate = backward self-citation rate
+ * 2.NumberOfBwd = number of backward citations
+ * No.1 & 2 use SelfCitationRate(PatentID).
+ */
 
 public class BackwardCitation {
 
@@ -34,16 +41,9 @@ public class BackwardCitation {
 	private float BwdSelfCitationRate;
 	int NumberOfBwd = 0;
 	
-	
-	
-	
-	public float GetBwdSelfCiteRate(){
-		return BwdSelfCitationRate;
-	}
-	public int GetNumOfBwdCitation(){
-		return NumberOfBwd;
-	}
-	
+	/*
+	 * connect to database
+	 */
 	public void Open2(){
 		try {
 			Class.forName( DRIVER );
@@ -106,7 +106,9 @@ public class BackwardCitation {
 	      System.out.println("Close Exception :" + e.toString());
 	    }
 	  }
-	
+	/*
+	 * select data from database
+	 */
 	public void GetTable(String pid) throws SQLException
 	{//search table content_1976-2009
 		int year;
@@ -123,6 +125,9 @@ public class BackwardCitation {
 			}	
 		}
 	}
+	/*
+	 * main part of this program
+	 */
 	public String GetAssignee(int pYear, String pID) throws SQLException{
 			String selectSQL_BwdAss = "SELECT `Assignee` FROM content_"+ pYear +" WHERE `Patent_id`='"+pID+"'";
 			ResultSet resultBwdAss = statement.executeQuery(selectSQL_BwdAss);
@@ -141,17 +146,16 @@ public class BackwardCitation {
 		GetTable(PatentID);
 		if(resultSet.absolute(1) != false){ //if patent is in this database
 			bwd_result = resultSet.getString("References Cited");
-			System.out.println(focal_year);
 			
-			if(bwd_result==null || bwd_result.equals("")){//if focal patent's "references cited" is null
+			if(bwd_result==null || bwd_result.equals("")){
+				//if focal patent's "references cited" is null, it means focal patent didn't cite other patent or has missing data.
 				BwdSelfCitationRate =0;
 				NumberOfBwd = 0;
-				//System.out.println("This Patent "+PatentID+" didn't cite other patent");
 			}
 			else{
 				bwd_patent = bwd_result.split(";");
 				NumberOfBwd = bwd_patent.length;
-				if(focal_year == OLDEST_YEAR){  //system have no ref_info before 1976
+				if(focal_year == OLDEST_YEAR){  //system have no reference information before 1976
 					BwdSelfCitationRate = -1;
 				}
 				else{
@@ -159,7 +163,6 @@ public class BackwardCitation {
 					
 					if (focal_assignee == null || focal_assignee.equals("")) {//if focal patent doesn't have assignee.
 						BwdSelfCitationRate = 0;
-						System.out.println("Can't find the focal patent "+PatentID+"'s assignee");
 					}
 					else {
 						
@@ -181,18 +184,15 @@ public class BackwardCitation {
 				}//end else	
 			}//end else
 		}
-		else{
+		else{// database doesn't have focal patent
 			focal_year = -1;
 			NumberOfBwd = -1;
 			BwdSelfCitationRate = -1;
-			
-			//System.out.println("Sorry! Database only implement patents from 1976~2009....");
-		}
-		
-		
-		
-		
+		}	
 	}
+	/*
+	 * Update variables to database
+	 */
 	public void DBUpdate()throws SQLException {
 
 		Open2();
@@ -221,9 +221,9 @@ public class BackwardCitation {
 	}
 	
 	public static void main(String[] args) throws SQLException {
-		BackwardCitation BW = new BackwardCitation();
+		/*BackwardCitation BW = new BackwardCitation();
 		BW.DBUpdate();
-		/*BW.Open();
+		BW.Open();
 		BW.Open2();
 		BW.SelfCitationRate("D403673");
 		BW.Close();

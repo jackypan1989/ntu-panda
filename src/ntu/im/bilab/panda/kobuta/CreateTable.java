@@ -9,7 +9,9 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
+/*
+ * create table and insert data to patent_mainclass_? in "mypaper"
+ */
 public class CreateTable {
 	static final String DRIVER = "com.mysql.jdbc.Driver";
 	static final String DATABASE_URL = "jdbc:mysql://140.112.107.207/patent_value";   //which database
@@ -176,16 +178,5 @@ public class CreateTable {
 	
 		CreateTable ct = new CreateTable();
 		ct.DBUpdate();
-		/*ct.Open();
-		ct.Open2();
-		String f = "0909";
-		if(f.length() == 4 && f.matches("[a-zA-Z0-9]*")){
-			System.out.println("yes");
-		}
-		
-		ct.extractmainclass("D523605",2006);
-		ct.extractmainclass("RE39451",2006);
-		ct.Close();
-		ct.Close2();*/
 	}//end main
 }

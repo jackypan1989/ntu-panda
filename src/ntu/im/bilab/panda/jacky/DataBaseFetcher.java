@@ -52,7 +52,6 @@ public class DataBaseFetcher extends DataBaseUtility {
 	
 	public void getPatentData(Patent patent, String patent_id){
 		// create a patent entity
-		
 		try {
 			// for new database
 			ResultSet result = getTuple(patent_id);
@@ -113,10 +112,8 @@ public class DataBaseFetcher extends DataBaseUtility {
     	return year;
     }
     
-	
-	
 	public static void main(String[] args)
 	{
-		Patent p = new Patent("4995689");
+		
 	}
 }

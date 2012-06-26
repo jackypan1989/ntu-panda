@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+/*
+ * read training data then insert patent_id and patent_year to database
+ */
 public class FillPatentID {
 	
 	static final String DRIVER = "com.mysql.jdbc.Driver";
