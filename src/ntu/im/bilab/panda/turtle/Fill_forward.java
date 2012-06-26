@@ -58,7 +58,7 @@ public class Fill_forward {
 				String patent_id = pItr.next();
 				int patent_year = patent_list.get(patent_id);
 				try{
-					Map<String,Integer> fwPatents = fwPatents = ForwardCite.getForwardList(patent_id, patent_year);
+					Map<String,Integer> fwPatents = ForwardCite.getForwardList(patent_id, patent_year);
 					Map<String, Integer> fw_result = ForwardCite.calForward(patent_id, patent_year, fwPatents);
 					
 					int num_of_fwd_citations = fw_result.get("num_of_fwd_citations");
