@@ -39,7 +39,7 @@ public class DataBaseUpdater extends DataBaseUtility{
 		// v_n 118
 		int update_count = 0;
 			try {
-	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_negative");
+	    		ResultSet result = stmt.executeQuery("SELECT * FROM value_positive");
 	    		//ResultSet result = stmt.executeQuery("SELECT * FROM value_positive ORDER BY `value_positive`.`DB_Status` ASC ");
 	    		//System.out.println(result.getRow());
 	    		while(result.next()){
