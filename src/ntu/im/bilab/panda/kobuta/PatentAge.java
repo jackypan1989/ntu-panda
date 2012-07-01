@@ -16,7 +16,7 @@ import java.text.*;
  * 3.AppTime = approval time(issued date - applied date)
  * 4.NumOfInventors = number of inventors
  * No.1 use CountPatentAge(PatentID)
- * No.2 use ParseInventors(PatentID) and countPatentAgeApplied()
+ * No.2 use ParseInventors(PatentID)
  * No.3 & 4 use ParseInventors(PatentID)
  */
 
@@ -49,6 +49,11 @@ public class PatentAge {
 	private int AppTime;
 	private int PatentAgeIssued = 0;
 	private int PatentAgeApplied = 0;
+	
+	public PatentAge(String PatentID) throws ParseException, SQLException{
+		CountPatentAge(PatentID);
+		ParseInventors(PatentID);
+	}
 	
 	public int GetPatentAgeIssued(){
 		return PatentAgeIssued;
@@ -284,8 +289,8 @@ public class PatentAge {
 
 	public static void main(String[] args) throws ParseException, SQLException {
 
-		PatentAge pa = new PatentAge();
-		pa.DBUpdate();
+		//PatentAge pa = new PatentAge();
+		//pa.DBUpdate();
 		/*
 		 * pa.Open(); pa.Open2();
 		 * 

@@ -18,8 +18,7 @@ import java.util.Iterator;
  * 4.AveLength_IndepClaim = average length of independent claim
  * 5.LengthOfDescription = length of description
  * 
- * No.1~4 use ExtractClaims(PatentID).
- * No.5 use ExtractClaims(PatentID)
+ * No.1~5 use ExtractClaims(PatentID).
  */
 public class claims {
 	static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -48,6 +47,10 @@ public class claims {
 	private int LengthOfDescription = 0;
 	private float AveLength_IndepClaim = 0;
 	private int Length_IndepClaim = 0;
+	
+	public claims(String PatentID) throws SQLException{
+		ExtractClaims(PatentID);
+	}
 
 	public int GetNumOfClaim() {
 		return NumOfClaim;
@@ -248,8 +251,8 @@ public class claims {
 
 	public static void main(String[] args) throws SQLException {
 		// String patentID = "RE29093";
-		claims cl = new claims();
-		cl.DBUpdate();
+		//claims cl = new claims();
+		//cl.DBUpdate();
 		/*
 		 * cl.Open(); cl.Open2(); cl.ExtractClaims("D403674"); cl.Close();
 		 * cl.Close2();

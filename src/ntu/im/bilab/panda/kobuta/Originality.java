@@ -47,6 +47,10 @@ public class Originality {
 	private int NumberOfBwd = 0;
 	private int focal_year = 0;
 	
+	public Originality(String PatentID) throws SQLException{
+		OriginIndex(PatentID);
+	}
+	
 	public float GetOriginalityIPC(){
 		return OriginalityIndexIPC;
 	}

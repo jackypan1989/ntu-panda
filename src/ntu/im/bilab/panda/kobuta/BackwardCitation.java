@@ -41,6 +41,9 @@ public class BackwardCitation {
 	private float BwdSelfCitationRate;
 	int NumberOfBwd = 0;
 	
+	public BackwardCitation(String PatentID) throws SQLException{
+		SelfCitationRate(PatentID);
+	}
 	public float GetBwdCitationRate(){
 		return BwdSelfCitationRate;
 	}
