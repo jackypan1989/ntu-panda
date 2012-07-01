@@ -11,10 +11,13 @@ public class DataBaseThread implements Runnable{
 		thread_id = num_of_threads;
 	}
 	
+	
 	public void run(){
-	  DataBaseUpdater dbu = new DataBaseUpdater();
+	  /*
+		DataBaseUpdater dbu = new DataBaseUpdater();
 	  dbu.updateParameter(thread_id);
 	  dbu.Close();
+	  */
     }
 	
 	public static void main(String[] args){

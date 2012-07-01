@@ -43,9 +43,9 @@ public class claims {
 	
 	private int NumOfClaim = 0;
 	private int NumOfIndepClaim = 0;
-	private int NumOfDepClaim =0;
-	private int LengthOfDescription =0;
-	private float AveLength_IndepClaim= 0;
+	private int NumOfDepClaim = 0;
+	private int LengthOfDescription = 0;
+	private float AveLength_IndepClaim = 0;
 	private int Length_IndepClaim = 0;
 
 	/*

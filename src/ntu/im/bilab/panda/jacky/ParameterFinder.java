@@ -7,11 +7,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-// find the parameters for "value" system
+/* 
+ * this class is used for finding the parameters for "value" system
+ * Author : r00 jackypan1989@gmail.com 
+ */
+
 public class ParameterFinder {
 	// special variable for EPO patent office retrieval
-	private static String ec;
+	private static String ec = "";
 
+	public ParameterFinder(String patent_id){
+		getEC(patent_id);
+	}
+	
 	/*
 	 * Variable Number : 1 
 	 * Method : return the amount of inventors 
@@ -302,27 +310,7 @@ public class ParameterFinder {
 
 		return patented_backward_citations;
 	}
-
-	/*
-	 * Variable Number : 52 
-	 * Method : return the number of the foreign priority
-	 *          applications from USPTO 
-	 * Author : r00 jackypan1989@gmail.com
-	 * Last Edit Date : 20120606
-	 */
-	public int getForeignPriorityApps(String data) {
-		int foreign_priority_apps = 0;
-
-		// clarify data if it includes foreign application priority data
-		if (data.contains("Foreign Application Priority Data")) {
-			// calculate
-			String[] foreign_patents = data.split("\\[");
-			foreign_priority_apps = foreign_patents.length - 1;
-		}
-
-		return foreign_priority_apps;
-	}
-
+	
 	/*
 	 * Variable Number : 51
 	 * Method : return the year of the target patent get the first citation
@@ -343,6 +331,28 @@ public class ParameterFinder {
 
 		return years_to_receive_the_first_citation;
 	}
+	
+	/*
+	 * Variable Number : 52 
+	 * Method : return the number of the foreign priority
+	 *          applications from USPTO 
+	 * Author : r00 jackypan1989@gmail.com
+	 * Last Edit Date : 20120606
+	 */
+	public int getForeignPriorityApps(String data) {
+		int foreign_priority_apps = 0;
+
+		// clarify data if it includes foreign application priority data
+		if (data.contains("Foreign Application Priority Data")) {
+			// calculate
+			String[] foreign_patents = data.split("\\[");
+			foreign_priority_apps = foreign_patents.length - 1;
+		}
+
+		return foreign_priority_apps;
+	}
+
+	
     
 	// get special variable for EPO patent office retrieval
 	public void getEC(String patent_id) {
