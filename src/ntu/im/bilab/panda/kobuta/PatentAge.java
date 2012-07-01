@@ -217,11 +217,13 @@ public class PatentAge {
 				NumOfInventors = inventors.length;
 			} else {
 				AppTime = -1;
+				PatentAgeApplied = -1;
 			}
 		}// end if
 		else {
 			AppTime = -1;
 			NumOfInventors = -1;
+			PatentAgeApplied = -1;
 		}
 	}
 
@@ -233,7 +235,7 @@ public class PatentAge {
 		Open2();
 		Open();
 
-		String selectSQL = "SELECT Patent_id FROM attacker_troll_negative";
+		String selectSQL = "SELECT Patent_id FROM attacker_expert";
 		statement2 = connection2.createStatement();
 		resultSet2 = statement2.executeQuery(selectSQL);
 		List<String> patent_id_list = new LinkedList<String>();
@@ -249,19 +251,20 @@ public class PatentAge {
 			CountPatentAge(patentID);
 			ParseInventors(patentID);
 			// System.out.println(PatentAgeIsseued);
+
 			/*
-			 * statement2 .executeUpdate(
-			 * "UPDATE licensability_negative SET num_of_inventors = '" +
-			 * NumOfInventors + "' , approval_time = '" + AppTime +
-			 * "' WHERE Patent_id = '" + patentID + "'");
+			 * statement2
+			 * .executeUpdate("UPDATE value_expert SET approval_time = '" +
+			 * AppTime + "' WHERE Patent_id = '" + patentID + "'");
 			 */
 			statement2
-					.executeUpdate("UPDATE attacker_troll_negative SET `patent_age_since_application_date` = '"
+					.executeUpdate("UPDATE attacker_expert SET `patent_age_since_application_date` = '"
 							+ PatentAgeApplied
 							+ "', `patent_age_since_issued_date` = '"
 							+ PatentAgeIsseued
 							+ "' WHERE Patent_id = '"
 							+ patentID + "'");
+
 		}
 
 		System.out.println("Program End");
