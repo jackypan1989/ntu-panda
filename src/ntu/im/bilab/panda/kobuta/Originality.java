@@ -47,6 +47,12 @@ public class Originality {
 	private int NumberOfBwd = 0;
 	private int focal_year = 0;
 	
+	public float GetOriginalityIPC(){
+		return OriginalityIndexIPC;
+	}
+	public float GetOriginalityUSPC(){
+		return OriginalityIndexUSPC;
+	}
 	/*
 	 * connect to database
 	 */

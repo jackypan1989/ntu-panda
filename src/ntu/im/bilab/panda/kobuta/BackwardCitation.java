@@ -41,6 +41,13 @@ public class BackwardCitation {
 	private float BwdSelfCitationRate;
 	int NumberOfBwd = 0;
 	
+	public float GetBwdCitationRate(){
+		return BwdSelfCitationRate;
+	}
+	public int GetNumOfBwd(){
+		return NumberOfBwd;
+	}
+	
 	/*
 	 * connect to database
 	 */

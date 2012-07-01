@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import ntu.im.bilab.panda.core.Config;
 
+
 import weka.classifiers.Classifier;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
@@ -135,37 +136,50 @@ public class LicensabilityClassification {
 		conn.close();
 	}
 	
-	private void setTarget(String PatentId) {
+	private void setTarget(String PatentID) {
 		Instance target;
 		target = new Instance(26);
 		//targetSet = new Instances("Target", fvWekaAttributes, 10);
 		//targetSet.setClassIndex(25);
-		target.setValue((Attribute)fvWekaAttributes.elementAt(0), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(1), inno.PatentGroups());
+		PatentAge age = new PatentAge();
+		age.ParseInventors(PatentID);
+		age.CountPatentAge(PatentID);
+		
+		BackwardCitation bwd = new BackwardCitation();
+		bwd.SelfCitationRate(PatentID);
+		
+		claims cl = new claims();
+		cl.ExtractClaims(PatentID);
+		
+		Originality origin = new Originality();
+		origin.OriginIndex(PatentID);
+		/*PLEASE¡@FILL ALL ELEMENT**/
+		target.setValue((Attribute)fvWekaAttributes.elementAt(0), age.GetNumOfInventors());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(1), ());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(2), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(3), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(4), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(5), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(6), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(7), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(8), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(9), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(10), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(11), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(12), inno.PatentGroups());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(8), cl.GetNumOfClaim());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(9), cl.GetNumOfIndepClaim());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(10), cl.GetNumOfDepClaim());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(11), cl.GetAveLengthOfIndepClaim());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(12), bwd.GetNumOfBwd());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(13), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(14), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(15), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(16), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(17), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(18), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(19), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(20)), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(21), inno.PatentGroups());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(17), age.GetApprovalTime());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(18), ());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(19), bwd.GetBwdCitationRate());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(20), origin.GetOriginalityIPC());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(21), origin.GetOriginalityUSPC());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(22), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(23), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(24), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(25), inno.PatentGroups());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(24), age.GetPatentAgeIssued());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(25), ());
 		//targetSet.add(target);
 	}
 	

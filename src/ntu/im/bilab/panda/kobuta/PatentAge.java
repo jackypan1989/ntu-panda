@@ -11,8 +11,8 @@ import java.text.*;
 /*
  * Author: kobuta
  * Number of variables: 3
- * 1.PatentAgeIsseued = Patent_age_since_issued_data(data collection date - issued date)
- * 2.PatentAgeIsseued = Patent_age_since_issued_data(data collection date - issued date)
+ * 1.PatentAgeIssued = Patent_age_since_issued_data(data collection date - issued date)
+ * 2.PatentAgeIssued = Patent_age_since_issued_data(data collection date - issued date)
  * 3.AppTime = approval time(issued date - applied date)
  * 4.NumOfInventors = number of inventors
  * No.1 use CountPatentAge(PatentID)
@@ -22,10 +22,8 @@ import java.text.*;
 
 public class PatentAge {
 	static final String DRIVER = "com.mysql.jdbc.Driver";
-	static final String DATABASE_URL = "jdbc:mysql://140.112.107.207/mypaper"; // which
-																				// database
-	static final String DATABASE_URL2 = "jdbc:mysql://140.112.107.207/patent_value"; // which
-																						// database
+	static final String DATABASE_URL = "jdbc:mysql://140.112.107.207/mypaper"; // which																			// database
+	static final String DATABASE_URL2 = "jdbc:mysql://140.112.107.207/patent_value"; // which database
 	static final String USERNAME = "root";
 	static final String PASSWORD = "123456";
 
@@ -49,9 +47,21 @@ public class PatentAge {
 	private String[] inventors;
 	private int NumOfInventors;
 	private int AppTime;
-	private int PatentAgeIsseued = 0;
+	private int PatentAgeIssued = 0;
 	private int PatentAgeApplied = 0;
-
+	
+	public int GetPatentAgeIssued(){
+		return PatentAgeIssued;
+	}
+	public int GetPatentAgeApplied(){
+		return PatentAgeIssued;
+	}
+	public int GetNumOfInventors(){
+		return NumOfInventors;
+	}
+	public int GetApprovalTime(){
+		return AppTime;
+	}
 	/*
 	 * connect to database
 	 */
@@ -162,12 +172,12 @@ public class PatentAge {
 			long time = 1000 * 3600 * 24;
 
 			if (t1 / time > 0) {
-				PatentAgeIsseued = (int) (t1 / time);
+				PatentAgeIssued = (int) (t1 / time);
 			} else {
 				System.out.println("Unable to caculate... ");
 			}
 		} else {
-			PatentAgeIsseued = -1;
+			PatentAgeIssued = -1;
 		}
 	}
 
@@ -250,7 +260,7 @@ public class PatentAge {
 			System.out.println("For patent " + patentID + ": ");
 			CountPatentAge(patentID);
 			ParseInventors(patentID);
-			// System.out.println(PatentAgeIsseued);
+			// System.out.println(PatentAgeIssued);
 
 			/*
 			 * statement2
@@ -261,7 +271,7 @@ public class PatentAge {
 					.executeUpdate("UPDATE attacker_expert SET `patent_age_since_application_date` = '"
 							+ PatentAgeApplied
 							+ "', `patent_age_since_issued_date` = '"
-							+ PatentAgeIsseued
+							+ PatentAgeIssued
 							+ "' WHERE Patent_id = '"
 							+ patentID + "'");
 
