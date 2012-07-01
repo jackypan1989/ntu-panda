@@ -144,7 +144,7 @@ public class Innovation {
         		int x=0;
                 x=USPatent.indexOf(" ",0);
                 
-                if( USPatent.substring(0,x).matches("[0-9]+") && USPatent.substring(0,x).length()== 7  ){
+                if( USPatent.substring(0,x).matches("[a-z]|[0-9]+") && USPatent.substring(0,x).length()== 7  ){
                 	//System.out.println(USPatent.substring(0,x));
                 	USPatentNum++;
                 	USPatent = USPatent.substring(x+1);

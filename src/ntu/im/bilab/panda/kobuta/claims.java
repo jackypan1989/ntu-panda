@@ -206,7 +206,7 @@ public class claims {
 	public void DBUpdate()throws SQLException{
 		Open();
 		Open2();
-		String selectSQL2 = "SELECT Patent_id FROM attacker_expert";
+		String selectSQL2 = "SELECT Patent_id FROM value_expert";
 		resultSet2 = statement2.executeQuery(selectSQL2);			    
 		List<String> patent_id_list = new LinkedList<String>(); 
 				
@@ -221,8 +221,9 @@ public class claims {
 		ExtractClaims(patentID);
 		Count_Description();
 		//System.out.println(AveLength_IndepClaim);
-		statement2.executeUpdate("UPDATE attacker_expert SET num_of_claims ='"+NumOfClaim+"' WHERE Patent_id = '"+patentID+"'");
-		//statement2.executeUpdate("UPDATE licensability_negative SET num_of_claims ='"+NumOfClaim+"', num_of_indep_claims = '"+ NumOfIndepClaim +"', num_of_dep_claims ='"+NumOfDepClaim+"', ave_length_of_indep_claims = '"+AveLength_IndepClaim+"' WHERE Patent_id = '"+patentID+"'");
+		//statement2.executeUpdate("UPDATE attacker_expert SET num_of_claims ='"+NumOfClaim+"' WHERE Patent_id = '"+patentID+"'");
+		statement2.executeUpdate("UPDATE value_expert SET num_of_claims ='"+NumOfClaim+"', num_of_indep_claims = '"+ NumOfIndepClaim +"', num_of_dep_claims ='"+NumOfDepClaim+"' WHERE Patent_id = '"+patentID+"'");
+		//statement2.executeUpdate("UPDATE value_expert SET `length_of_description` = '"+LengthOfDescription+"' WHERE Patent_id = '"+patentID+"'");
 		// num_of_dep_claims ='"+NumOfDepClaim+"', 
 		
 		}//end while
@@ -233,9 +234,9 @@ public class claims {
 	}
 	public static void main(String[] args) throws SQLException {
 		//String patentID = "RE29093";
-		/*claims cl = new claims();
+		claims cl = new claims();
 		cl.DBUpdate();
-		cl.Open();
+		/*cl.Open();
 		cl.Open2();
 		cl.ExtractClaims("D403674");
 		cl.Close();
