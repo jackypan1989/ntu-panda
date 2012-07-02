@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import ntu.im.bilab.panda.core.Config;
+
 public class Fill_forward {
 	static String driver = "com.mysql.jdbc.Driver";
 	static String url = "jdbc:mysql://140.112.107.207/patent_value";
@@ -22,8 +24,9 @@ public class Fill_forward {
 	static int tmp_patent_year = 1981;
 	
 	public static void main(String[] args) throws Exception {
-		fillAttr("value_positive");
-		fillAttr("value_negative");
+		fillAttr("attacker_expert");
+		fillAttr("attacker_troll_negative");
+		fillAttr("attacker_troll_positive");
 	}
 	
 	static void fillAttr(String updateTable){
@@ -31,17 +34,9 @@ public class Fill_forward {
 		Statement stmt = null;
 		//String updateTable = "licensability_negative";
 		
-		/*Map<String, Integer> fw_result = ForwardCite.calForward(tmp_patent_id, tmp_patent_year);
-		System.out.println(fw_result.get("num_of_fwd_citations"));
-		System.out.println(fw_result.get("num_of_fwd_3years"));
-		System.out.println(fw_result.get("num_of_fwd_5years"));
-		System.out.println(ForwardCite.getGenerality(tmp_patent_id, tmp_patent_year,"ipc"));
-		System.out.println(ForwardCite.getGenerality(tmp_patent_id, tmp_patent_year,"ccl"));
-		System.out.println(ForwardCite.getAvgForward(tmp_patent_id, tmp_patent_year));*/
-		
 		try { 
-			Class.forName(driver); 
-			conn = DriverManager.getConnection(url, user , password);	
+			Class.forName(Config.DRIVER);
+			conn = DriverManager.getConnection(Config.DATABASE_URL, Config.DATABASE_USER, Config.DATABASE_PASSWORD);
 			stmt = conn.createStatement(); 
 			
 			ResultSet result = stmt.executeQuery("SELECT Patent_id, Patent_year FROM "+updateTable); 
@@ -57,35 +52,42 @@ public class Fill_forward {
 			while(pItr.hasNext()){
 				String patent_id = pItr.next();
 				int patent_year = patent_list.get(patent_id);
-				try{
-					Map<String,Integer> fwPatents = ForwardCite.getForwardList(patent_id, patent_year);
-					Map<String, Integer> fw_result = ForwardCite.calForward(patent_id, patent_year, fwPatents);
+			  
+		    	try{
+		    		ForwardCite forwardcite = new ForwardCite(patent_id);
+					//Map<String,Integer> fwPatents = ForwardCite.getForwardList(patent_id, patent_year);
+					Map<String, Integer> fw_result = forwardcite.getForward();
 					
 					int num_of_fwd_citations = fw_result.get("num_of_fwd_citations");
 					int num_of_fwd_3years = fw_result.get("num_of_fwd_3years");
-					//int num_of_fwd_5years = fw_result.get("num_of_fwd_5years");
-					//float ave_num_of_fwd = ForwardCite.getAvgForward(patent_id, patent_year, fwPatents);
-					//float generality_IPC = ForwardCite.getGenerality(patent_id, patent_year,"ipc", fwPatents);
-					//float generality_USPC = ForwardCite.getGenerality(patent_id, patent_year,"ccl", fwPatents);
-					float extensive_generality = ForwardCite.getExtGenerality(patent_id, patent_year, fwPatents);
+					int num_of_fwd_5years = fw_result.get("num_of_fwd_5years");
+					float ave_num_of_fwd = forwardcite.getAvgForward();
+					float fwd_selfcitation_rate = forwardcite.getFwSelfCite();
+					float generality_IPC = forwardcite.getGenerality("ipc");
+					float generality_USPC = forwardcite.getGenerality("ccl");
+					//float extensive_generality = forwardcite.getExtGenerality();
 					
 					String sql = "UPDATE `patent_value`.`"+updateTable+"` SET " +
 							"`num_of_fwd_citations` = '"+num_of_fwd_citations+"'" +
 							",`num_of_fwd_3years` = '"+num_of_fwd_3years+"' " +
-							//",`num_of_fwd_5years` = '"+num_of_fwd_5years+"' " +
-							//",`ave_num_of_fwd` = '"+ave_num_of_fwd+"' " +
-							//",`generality_IPC` = '"+generality_IPC+"' " +
-							//",`generality_USPC` = '"+generality_USPC+"' " +
-							",`extensive_generality` = '"+extensive_generality+"' " +
+							",`num_of_fwd_5years` = '"+num_of_fwd_5years+"' " +
+							",`ave_num_of_fwd` = '"+ave_num_of_fwd+"' " +
+							",`fwd_selfcitation_rate` = '"+fwd_selfcitation_rate+"' " +
+							",`generality_IPC` = '"+generality_IPC+"' " +
+							",`generality_USPC` = '"+generality_USPC+"' " +
+							//",`extensive_generality` = '"+extensive_generality+"' " +
 							  "WHERE `Patent_id` = '"+patent_id+"'";
 					stmt.executeUpdate(sql);
-					//System.out.println(patent_id+" "+patent_year+" "
-						//	+num_of_fwd_citations+" "+num_of_fwd_3years+" "+num_of_fwd_5years+" "+ave_num_of_fwd+" "+generality_IPC+" "+generality_USPC);
-					System.out.println(patent_id+" "+patent_year+" "+num_of_fwd_citations+" "+num_of_fwd_3years+" "+extensive_generality);
+					System.out.println(patent_id+" "+patent_year+" "
+							+num_of_fwd_citations+" "+num_of_fwd_3years+" "+num_of_fwd_5years+" "+ave_num_of_fwd+" "
+							+fwd_selfcitation_rate+""+generality_IPC+" "+generality_USPC);
+					//System.out.println(patent_id+" "+patent_year+" "+num_of_fwd_citations+" "+num_of_fwd_3years+" "+extensive_generality);
 				}catch(Exception e){
 					System.out.println(patent_id+"¶ë­È®É¥X¿ù!");
 					e.printStackTrace();
 				}
+			 
+				
 			}
 		
 		} 
