@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.util.Map;
 
 import ntu.im.bilab.panda.core.Config;
 import ntu.im.bilab.panda.parameter.*;
@@ -164,7 +166,7 @@ public class LicensabilityClassification {
 		conn.close();
 	}
 
-	private void setTarget(String PatentID) {
+	private void setTarget(String PatentID) throws Exception, SQLException {
 		Instance target;
 		target = new Instance(26);
 		//targetSet = new Instances("Target", fvWekaAttributes, 10);
@@ -175,10 +177,11 @@ public class LicensabilityClassification {
 		Originality origin = new Originality(PatentID);
 		
 		Innovation inno = new Innovation(PatentID);
-		//ForwardCite fwd = new ForwardCite(PatentID);
+		
+		ForwardCite forwardcite = new ForwardCite(PatentID);
+		Map<String, Integer> fw_result = forwardcite.getForward();
 		
 		/*PLEASE¡@FILL ALL ELEMENT*/
-		target.setValue((Attribute)fvWekaAttributes.elementAt(0), ());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(1), age.GetNumOfInventors());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(2), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(3), inno.PatentGroups());
@@ -191,19 +194,19 @@ public class LicensabilityClassification {
 		target.setValue((Attribute)fvWekaAttributes.elementAt(10), cl.GetNumOfDepClaim());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(11), cl.GetAveLengthOfIndepClaim());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(12), bwd.GetNumOfBwd());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(13), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(14), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(15), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(16), inno.PatentGroups());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(13), fw_result.get("num_of_fwd_citations"));
+		target.setValue((Attribute)fvWekaAttributes.elementAt(14), fw_result.get("num_of_fwd_3years"));
+		target.setValue((Attribute)fvWekaAttributes.elementAt(15), fw_result.get("num_of_fwd_5years"));
+		target.setValue((Attribute)fvWekaAttributes.elementAt(16), forwardcite.getAvgForward());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(17), age.GetApprovalTime());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(18), cl.GetGetLengthOfDescription());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(18), cl.GetLengthOfDescription());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(19), bwd.GetBwdCitationRate());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(20), origin.GetOriginalityIPC());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(21), origin.GetOriginalityUSPC());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(22), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(23), inno.PatentGroups());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(22), forwardcite.getGenerality("ipc"));
+		target.setValue((Attribute)fvWekaAttributes.elementAt(23), forwardcite.getGenerality("ccl"));
 		target.setValue((Attribute)fvWekaAttributes.elementAt(24), age.GetPatentAgeIssued());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(25), ());
+		//target.setValue((Attribute)fvWekaAttributes.elementAt(25), ());
 		//targetSet.add(target);
 	}
 

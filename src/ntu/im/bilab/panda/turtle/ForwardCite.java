@@ -393,13 +393,19 @@ public class ForwardCite {
 	}
 	
 	//No.23 ºâ¥XAvg number of Forward Citations
-	public float getAvgForward() throws Exception{
-		float patentAge = calDate(getDateById(this.patent_id, this.patent_year), dataCollect_date)/365f;
-		if(this.fwPatents==null)
-			this.fwPatents = getForwardList(this.patent_id, this.patent_year);
-		//Map<String,Integer> fwPatents = getForwardList(patent_id, patent_year); //forwardCite¦Cªí
-		float avgForward = this.fwPatents.size()/patentAge;
-		//System.out.println(avgForward);
+	public float getAvgForward(){
+		float patentAge;
+		float avgForward= 0;
+		try {
+			patentAge = calDate(getDateById(this.patent_id, this.patent_year), dataCollect_date)/365f;
+			if(this.fwPatents==null)
+				this.fwPatents = getForwardList(this.patent_id, this.patent_year);
+			avgForward = this.fwPatents.size()/patentAge;
+			//System.out.println(avgForward);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		
 		return avgForward;
 	}
