@@ -28,8 +28,8 @@ public class Diversity {
 	
 	private void findInstance() {
 		try {
-			//³s±µ¸ê®Æ®w
-			url="jdbc:mysql://140.112.107.207/mypaper?user=root&password=123456&autoReconnect=true";//¤p³D
+			//ï¿½sï¿½ï¿½ï¿½ï¿½Æ®w
+			url="jdbc:mysql://140.112.107.207/mypaper?user=root&password=123456&autoReconnect=true";//ï¿½pï¿½D
 			conn = DriverManager.getConnection(url);
 			//System.out.println(Patent_id);
 			String selectSQL = null;
@@ -90,7 +90,7 @@ public class Diversity {
 					stat = conn.createStatement();
 					rs = stat.executeQuery(selectSQL);
 					while(rs.next()) {
-						//System.out.println(Patent_id + "³Q" + rs.getString("Referenced_By") + "¤Þ¥Î, ¨äÃþ§O¦³: ");
+						//System.out.println(Patent_id + "ï¿½Q" + rs.getString("Referenced_By") + "ï¿½Þ¥ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½: ");
 						Statement _stat = null;
 						ResultSet _rs = null;
 						int _year = 1976, _atYear = -1;
@@ -129,7 +129,7 @@ public class Diversity {
 				stat = conn.createStatement();
 				rs = stat.executeQuery(selectSQL);
 				while(rs.next()) {
-					//System.out.println(Patent_id + "¤Þ¥Î" + rs.getString("Patent_id") + ", ¨äÃþ§O¦³: ");
+					//System.out.println(Patent_id + "ï¿½Þ¥ï¿½" + rs.getString("Patent_id") + ", ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½: ");
 					Statement _stat = null;
 					ResultSet _rs = null;
 					int _year = 1976, _atYear = -1;
@@ -189,7 +189,7 @@ public class Diversity {
 				//String url="jdbc:mysql://daventu.no-ip.org/patent_value?user=bilab&password=bilab";
 				conn = DriverManager.getConnection(url);
 			    if(!conn.isClosed())
-			        System.out.println("¸ê®Æ®w³s½u¦¨¥\");
+			        System.out.println("connetion is closed");
 		    } 
 			
 			catch(ClassNotFoundException e) { 
