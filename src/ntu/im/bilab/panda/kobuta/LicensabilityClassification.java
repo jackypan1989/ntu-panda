@@ -11,6 +11,7 @@ import java.util.Map;
 import ntu.im.bilab.panda.core.Config;
 import ntu.im.bilab.panda.parameter.*;
 import ntu.im.bilab.panda.turtle.*;
+import ntu.im.bilab.panda.ivy.*;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.trees.J48;
@@ -181,15 +182,24 @@ public class LicensabilityClassification {
 		ForwardCite forwardcite = new ForwardCite(PatentID);
 		Map<String, Integer> fw_result = forwardcite.getForward();
 		
+		TechnologicalDiversity diversity = new TechnologicalDiversity(PatentID);
+		
+		PatentFamilyFinder p_family = new PatentFamilyFinder(PatentID);
+		
 		/*PLEASE¡@FILL ALL ELEMENT*/
 		target.setValue((Attribute)fvWekaAttributes.elementAt(1), age.GetNumOfInventors());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(2), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(3), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(4), inno.PatentGroups());
+		/*target.setValue((Attribute)fvWekaAttributes.elementAt(4), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(5), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(6), inno.PatentGroups());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(7), inno.PatentGroups());
-		target.setValue((Attribute)fvWekaAttributes.elementAt(8), cl.GetNumOfClaim());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(8), cl.GetNumOfClaim());*/
+		target.setValue((Attribute)fvWekaAttributes.elementAt(4), diversity.getDiversity_IPC());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(5), diversity.getDiversity_USPC());
+		target.setValue((Attribute)fvWekaAttributes.elementAt(6), p_family.getPatentFamilyVolume(PatentID));
+		target.setValue((Attribute)fvWekaAttributes.elementAt(7), p_family.getPatentFamilySize(PatentID));
+		target.setValue((Attribute)fvWekaAttributes.elementAt(8), p_family.getMajorMarket(PatentID));
 		target.setValue((Attribute)fvWekaAttributes.elementAt(9), cl.GetNumOfIndepClaim());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(10), cl.GetNumOfDepClaim());
 		target.setValue((Attribute)fvWekaAttributes.elementAt(11), cl.GetAveLengthOfIndepClaim());
