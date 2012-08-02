@@ -73,7 +73,7 @@ public class Patent {
 	public void fetchDataFromDb(String patent_id) {
 		DataBaseFetcher dbf = new DataBaseFetcher();
 		dbf.getPatentData(this, patent_id);
-		dbf.Close();
+		dbf.close();
 	}
 	
 	public void setInfo(Map<String, String> info) {

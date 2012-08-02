@@ -4,6 +4,7 @@ import java.sql.*;
 
 import ntu.im.bilab.panda.core.Config;
 
+// Author : jackypan1989@gmail
 public class Cleaner {
 	public static void main(String[] args) {
 		Connection conn = null;
