@@ -177,7 +177,7 @@ public class Patent {
 	public static void main(String[] args)
 	{
 		Patent p = new Patent("5110638");
-		HashMap<String,String> m = (HashMap<String, String>) p.getInfo();
+		//HashMap<String,String> m = (HashMap<String, String>) p.getInfo();
 		HashMap<String,String> s = (HashMap<String, String>) p.getParams();
 		
 		Iterator<String> iterator = s.keySet().iterator();  

@@ -33,7 +33,7 @@ public class DataBaseUpdater {
 				String patent_id = result.getString("Patent_id");
 				Patent patent = new Patent(patent_id);
 
-				Map<String, String> info = patent.getInfo();
+				//Map<String, String> info = patent.getInfo();
 				Map<String, String> params = patent.getParams();
 
 				Iterator<String> iterator = params.keySet().iterator();

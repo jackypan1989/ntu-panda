@@ -76,7 +76,7 @@ public class DataBaseFetcher {
 	}
 
 	public int getYear(Patent patent, String parameter) {
-		int start_year = 1976;
+		//int start_year = 1976;
 		int end_year = 2009;
 		int year = -1;
 
