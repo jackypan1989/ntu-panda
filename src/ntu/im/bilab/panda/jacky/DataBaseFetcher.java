@@ -1,10 +1,8 @@
 package ntu.im.bilab.panda.jacky;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 import ntu.im.bilab.panda.core.Config;
 
@@ -33,7 +31,6 @@ public class DataBaseFetcher {
 					return result;
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -57,31 +54,25 @@ public class DataBaseFetcher {
 			getOldDataBaseContent(patent, patent_id, year);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public void getOldDataBaseContent(Patent patent, String patent_id,
 			String year) {
-
+		String url = Config.NEW_DATABASE_URL;
+		String user = Config.DATABASE_USER;
+		String pwd = Config.DATABASE_PASSWORD;
+		DB db_old = new DB(url, user, pwd);
+		String sql = "select * from uspto_" + year + " where Patent_id =" + "'"
+				+ patent_id + "'";
+		ResultSet result = db_old.query(sql);
 		try {
-			Class.forName(Config.DRIVER);
-			Connection conn = DriverManager.getConnection(Config.DATABASE_URL,
-					Config.DATABASE_USER, Config.DATABASE_PASSWORD);
-			Statement stmt = conn.createStatement();
-			ResultSet result = stmt.executeQuery("select * from uspto_" + year
-					+ " where Patent_id =" + "'" + patent_id + "'");
 			result.next();
-			patent.setOld_data(result);
-
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		patent.setOld_data(result);
 	}
 
 	public int getYear(Patent patent, String parameter) {
@@ -103,15 +94,14 @@ public class DataBaseFetcher {
 					if (result.absolute(1))
 						return i;
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
 		return year;
 	}
-	
-	public void close(){
+
+	public void close() {
 		db.close();
 	}
 }
