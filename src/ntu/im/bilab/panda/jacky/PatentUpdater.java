@@ -12,10 +12,10 @@ import java.util.Map;
 
 import ntu.im.bilab.panda.core.Config;
 
-public class DataBaseUpdater {
+public class PatentUpdater {
 	public DB db;
 
-	public DataBaseUpdater() {
+	public PatentUpdater() {
 		String url = Config.DATABASE_URL;
 		String user = Config.DATABASE_USER;
 		String pwd = Config.DATABASE_PASSWORD;
@@ -120,7 +120,7 @@ public class DataBaseUpdater {
 	}
 	
 	public static void main(String[] args) {
-		DataBaseUpdater dbu = new DataBaseUpdater();
+		PatentUpdater dbu = new PatentUpdater();
 		dbu.updateParams("value_positive", 1);
 		// dbu.updateTrainingData();
 		dbu.close();

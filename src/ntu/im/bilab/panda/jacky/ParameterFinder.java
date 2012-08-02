@@ -320,7 +320,7 @@ public class ParameterFinder {
 	public int getYearsToReceiveTheFirstCitation(Patent patent) {
 		int years_to_receive_the_first_citation = 0;
 
-		DataBaseFetcher dbf = new DataBaseFetcher();
+		PatentFetcher dbf = new PatentFetcher();
 		int year = dbf.getYear(patent, "years_to_receive_the_first_citation");
 
 		// not yet receive the first citation

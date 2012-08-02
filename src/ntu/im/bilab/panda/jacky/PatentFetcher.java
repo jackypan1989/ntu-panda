@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 import ntu.im.bilab.panda.core.Config;
 
-public class DataBaseFetcher {
+public class PatentFetcher {
 	private DB db;
 
-	public DataBaseFetcher() {
+	public PatentFetcher() {
 		String url = Config.NEW_DATABASE_URL;
 		String user = Config.DATABASE_USER;
 		String pwd = Config.DATABASE_PASSWORD;

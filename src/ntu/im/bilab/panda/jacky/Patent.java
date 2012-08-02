@@ -49,7 +49,7 @@ public class Patent {
 	}
 	
 	public void fetchDataFromDb(String patent_id) {
-		DataBaseFetcher dbf = new DataBaseFetcher();
+		PatentFetcher dbf = new PatentFetcher();
 		dbf.getPatentData(this, patent_id);
 		dbf.close();
 	}
